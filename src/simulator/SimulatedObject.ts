@@ -2,29 +2,35 @@ import { Mesh } from "three";
 import type { World, RigidBody } from "../rapier";
 import { rapier } from "../rapier";
 
+interface PhysicalProperties {
+  fixed?: boolean;
+}
+
 export class SimulatedObject {
   rigidBody?: RigidBody;
 
-  constructor(public threejsObject: Mesh) {}
+  constructor(
+    public threejsObject: Mesh,
+    private physicalProperties: PhysicalProperties = {},
+  ) {}
 
   public addToPhysicsWorld(physicsWorld: World) {
-    this.rigidBody = physicsWorld.createRigidBody(
-      rapier.RigidBodyDesc.dynamic().setCcdEnabled(true),
+    const rigidBodyDesc = new rapier.RigidBodyDesc(
+      this.physicalProperties.fixed
+        ? rapier.RigidBodyType.Fixed
+        : rapier.RigidBodyType.Dynamic,
     );
+    rigidBodyDesc.setCcdEnabled(true);
+    this.rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
     const positions = this.threejsObject.geometry.getAttribute("position");
-  console.log("positions", this.threejsObject);
-    const meshIndexes =
-      this.threejsObject.geometry.getIndex()?.array;
-    const indexes =
-      meshIndexes != null
-        ? new Uint32Array([...meshIndexes])
-        : createUint32Range(positions.array.length / 3);
-    const colliderDesc = rapier.ColliderDesc.trimesh(
+    const colliderDesc = rapier.ColliderDesc.convexHull(
       new Float32Array([...positions.array]),
-      indexes,
     );
-    const collider = physicsWorld.createCollider(colliderDesc, this.rigidBody);
-    collider.setRestitution(0);
+    colliderDesc!.setFriction(0.5);
+    const collider = physicsWorld.createCollider(colliderDesc!, this.rigidBody);
+    this.rigidBody.setTranslation(this.threejsObject.position, false);
+    this.rigidBody.setRotation(this.threejsObject.quaternion, false);
+    collider.setRestitution(0.1);
   }
 
   public updateFromCollider(): void {
@@ -36,10 +42,3 @@ export class SimulatedObject {
   }
 }
 
-function createUint32Range(length: number) {
-  const result = new Uint32Array(length);
-  for (let i = 0; i < length; i++) {
-    result[i] = i;
-  }
-  return result;
-}
