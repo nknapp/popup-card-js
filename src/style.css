@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,
+html {
+  @apply bg-black;
+  @apply text-stone-50;
+  @apply h-screen;
+}
+
+#app {
+  @apply h-screen w-screen;
+}
+
+a {
+  @apply text-amber-200 underline underline-offset-2;
+}
+
+h1 {
+  @apply text-2xl;
+}
+h2 {
+  @apply text-xl font-bold;
+}
