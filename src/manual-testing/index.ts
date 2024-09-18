@@ -1,17 +1,17 @@
-import { ManualTest } from "./types.ts";
+import { CleanupFunction, ManualTest } from "./types.ts";
 
-const tests: Record<
-  string,
-  { (): Promise<(div: HTMLDivElement) => Promise<void>> }
-> = import.meta.glob<ManualTest>("../**/*.manual-test.ts", {
-  import: "manualTest",
-});
+const tests: Record<string, () => Promise<ManualTest>> =
+  import.meta.glob<ManualTest>("../**/*.manual-test.ts", {
+    import: "manualTest",
+  });
+
+let cleanupFn: CleanupFunction | null = null;
 
 export function listOfTests() {
   return `<ul class="py-4">
       ${Object.keys(tests)
         .map((moduleName) => {
-          return `<li class="mb-2"><a href="?test=${encodeURIComponent(moduleName)}">${moduleName}</a></li>`;
+          return `<li class="mb-2"><a data-test-link="true" href="?test=${encodeURIComponent(moduleName)}">${moduleName}</a></li>`;
         })
         .join("")}
     </ul>`;
@@ -29,26 +29,48 @@ export function page(appElement: HTMLDivElement) {
         <div>
     `;
 
-  const currentTest = new URLSearchParams(document.location.search).get("test");
-  if (currentTest != null) {
-    runTest(currentTest)
-      .then(() => (document.querySelector("#error-container")!.innerHTML = ""))
-      .catch((error) => {
-        document.querySelector("#error-container")!.textContent = error.stack
-          .replaceAll(document.location.origin, "")
-          .replace(/\?t=\d+/g, "");
-      });
+  const testLink = document.querySelectorAll("[data-test-link]");
+  for (const link of testLink) {
+    link.addEventListener("click", (event) => {
+      window.history.pushState("", "", link.getAttribute("href"));
+      event.preventDefault();
+
+      runCurrentTest();
+    });
   }
+
+  runCurrentTest();
 }
 
-export async function runTest(moduleName: string) {
-  const textContainer =
+export async function runCurrentTest() {
+  const currentTest = new URLSearchParams(document.location.search).get("test");
+  await runTest(currentTest);
+}
+
+export async function runTest(moduleName: string | null) {
+  const errorContainer =
+    document.querySelector<HTMLDivElement>("#error-container")!;
+  const testContainer =
     document.querySelector<HTMLDivElement>("#test-container")!;
-  const moduleFn = tests[moduleName];
-  if (moduleFn == null) {
-    textContainer.textContent = `Test not found "${moduleName}"`;
+
+  if (cleanupFn) await cleanupFn();
+  testContainer.innerHTML = "";
+  if (moduleName == null) {
     return;
   }
-  const testModule = await tests[moduleName]();
-  await testModule(textContainer);
+
+  try {
+    const moduleFn = tests[moduleName];
+    if (moduleFn == null) {
+      errorContainer.textContent = `Test not found "${moduleName}"`;
+      return;
+    }
+    const testModule = await tests[moduleName]();
+    cleanupFn = await testModule(testContainer);
+    errorContainer.innerHTML = "";
+  } catch (error) {
+    document.querySelector("#error-container")!.textContent = (error as Error)
+      .stack!.replaceAll(document.location.origin, "")
+      .replace(/\?t=\d+/g, "");
+  }
 }

@@ -1,2 +1,3 @@
+export type ManualTest = (div: HTMLDivElement) => Promise<CleanupFunction>;
 
-export type ManualTest = (div: HTMLDivElement) => Promise<void>;
+export type CleanupFunction = () => void | Promise<void>;
