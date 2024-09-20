@@ -49,7 +49,7 @@ export class Simulator {
   }
 
   add(simulatedObject: SimulatedObject) {
-    this.scene.add(simulatedObject.threejsObject);
+    this.scene.add(simulatedObject.mesh);
     simulatedObject.addToPhysicsWorld(this.world);
     this.objects.push(simulatedObject);
   }

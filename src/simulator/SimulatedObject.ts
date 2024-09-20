@@ -3,16 +3,32 @@ import type { World, RigidBody } from "../rapier";
 import { rapier } from "../rapier";
 
 interface PhysicalProperties {
-  fixed?: boolean;
+  fixed: boolean;
+  /**
+   * The friction of the object.
+   * A number between 0 and 1
+   */
+  friction: number;
+  restitution: number;
 }
 
 export class SimulatedObject {
   rigidBody?: RigidBody;
+  mesh: Mesh;
+  private physicalProperties: PhysicalProperties
 
   constructor(
-    public threejsObject: Mesh,
-    private physicalProperties: PhysicalProperties = {},
-  ) {}
+    mesh: Mesh,
+    physicalProperties: Partial<PhysicalProperties> = {},
+  ) {
+    this.mesh = mesh
+    this.physicalProperties = {
+      fixed: false,
+      friction: 1,
+      restitution: 0,
+      ...physicalProperties,
+    };
+  }
 
   public addToPhysicsWorld(physicsWorld: World) {
     const rigidBodyDesc = new rapier.RigidBodyDesc(
@@ -22,23 +38,22 @@ export class SimulatedObject {
     );
     rigidBodyDesc.setCcdEnabled(true);
     this.rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
-    const positions = this.threejsObject.geometry.getAttribute("position");
+    const positions = this.mesh.geometry.getAttribute("position");
     const colliderDesc = rapier.ColliderDesc.convexHull(
       new Float32Array([...positions.array]),
     );
-    colliderDesc!.setFriction(0.5);
+    colliderDesc!.setFriction(this.physicalProperties.friction);
     const collider = physicsWorld.createCollider(colliderDesc!, this.rigidBody);
-    this.rigidBody.setTranslation(this.threejsObject.position, false);
-    this.rigidBody.setRotation(this.threejsObject.quaternion, false);
-    collider.setRestitution(0.1);
+    this.rigidBody.setTranslation(this.mesh.position, false);
+    this.rigidBody.setRotation(this.mesh.quaternion, false);
+    collider.setRestitution(this.physicalProperties.restitution);
   }
 
   public updateFromCollider(): void {
     if (this.rigidBody != null) {
       const t = this.rigidBody.translation();
-      this.threejsObject.position.set(t.x, t.y, t.z);
-      this.threejsObject.quaternion.copy(this.rigidBody.rotation());
+      this.mesh.position.set(t.x, t.y, t.z);
+      this.mesh.quaternion.copy(this.rigidBody.rotation());
     }
   }
 }
-
