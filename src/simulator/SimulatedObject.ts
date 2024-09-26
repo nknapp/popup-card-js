@@ -1,5 +1,5 @@
 import { Mesh } from "three";
-import type { World, RigidBody } from "../rapier";
+import type { RigidBody, World } from "../rapier";
 import { rapier } from "../rapier";
 
 interface PhysicalProperties {
@@ -15,13 +15,13 @@ interface PhysicalProperties {
 export class SimulatedObject {
   rigidBody?: RigidBody;
   mesh: Mesh;
-  private physicalProperties: PhysicalProperties
+  private physicalProperties: PhysicalProperties;
 
   constructor(
     mesh: Mesh,
     physicalProperties: Partial<PhysicalProperties> = {},
   ) {
-    this.mesh = mesh
+    this.mesh = mesh;
     this.physicalProperties = {
       fixed: false,
       friction: 1,
@@ -39,8 +39,12 @@ export class SimulatedObject {
     rigidBodyDesc.setCcdEnabled(true);
     this.rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
     const positions = this.mesh.geometry.getAttribute("position");
+    const index = this.mesh.geometry.index;
+    if (index == null) {
+      throw new Error("Mesh geometry does not have indexes");
+    }
     const colliderDesc = rapier.ColliderDesc.convexHull(
-      new Float32Array([...positions.array]),
+      new Float32Array(positions.array),
     );
     colliderDesc!.setFriction(this.physicalProperties.friction);
     const collider = physicsWorld.createCollider(colliderDesc!, this.rigidBody);

@@ -8,9 +8,9 @@ export function createCamera(aspect: number) {
         0.1,
         10000
     );
-    camera.position.x = 20;
-    camera.position.z = 20;
-    camera.position.y = 20;
+    camera.position.x = 2;
+    camera.position.z = 2;
+    camera.position.y = 2;
 
     return camera;
 }
