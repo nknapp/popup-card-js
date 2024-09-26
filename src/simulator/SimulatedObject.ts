@@ -39,10 +39,6 @@ export class SimulatedObject {
     rigidBodyDesc.setCcdEnabled(true);
     this.rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
     const positions = this.mesh.geometry.getAttribute("position");
-    const index = this.mesh.geometry.index;
-    if (index == null) {
-      throw new Error("Mesh geometry does not have indexes");
-    }
     const colliderDesc = rapier.ColliderDesc.convexHull(
       new Float32Array(positions.array),
     );

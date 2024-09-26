@@ -9,7 +9,7 @@
     "test:lint": "eslint .",
     "test:unit": "vitest run",
     "dev": "run-p dev:*",
-    "dev:unit": "vitest",
+    "dev:unit": "vitest --ui",
     "dev:server": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@eslint/js": "^9.10.0",
     "@types/three": "^0.168.0",
+    "@vitest/ui": "^2.1.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.10.0",
     "globals": "^15.9.0",
