@@ -1,6 +1,7 @@
-import { Mesh } from "three";
+import {Mesh, Scene} from "three";
 import type { RigidBody, World } from "../rapier";
 import { rapier } from "../rapier";
+import {ISimulatedObject} from "./Simulator.ts";
 
 interface PhysicalProperties {
   fixed: boolean;
@@ -12,7 +13,7 @@ interface PhysicalProperties {
   restitution: number;
 }
 
-export class SimulatedObject {
+export class SimpleSimulatedObject implements ISimulatedObject {
   rigidBody?: RigidBody;
   mesh: Mesh;
   private physicalProperties: PhysicalProperties;
@@ -28,6 +29,10 @@ export class SimulatedObject {
       restitution: 0,
       ...physicalProperties,
     };
+  }
+
+  public addToScene(scene: Scene) {
+    scene.add(this.mesh)
   }
 
   public addToPhysicsWorld(physicsWorld: World) {

@@ -1,16 +1,21 @@
-import { Clock, PCFSoftShadowMap, Scene, WebGLRenderer } from "three";
+import {Clock, PCFSoftShadowMap, Scene, WebGLRenderer} from "three";
 import { createCamera } from "./createCamera.ts";
 import { createLights } from "./createLights.ts";
 import { createControls } from "./createControls.ts";
-import { SimulatedObject } from "./SimulatedObject.ts";
 import { rapier, World } from "../rapier";
 import { RapierThreeJsDebugRenderer } from "./RapierThreeJsDebugRenderer.ts";
+
+export interface ISimulatedObject {
+  addToScene(scene: Scene): void
+  addToPhysicsWorld(world: World): void;
+  updateFromCollider(): void;
+}
 
 export class Simulator {
   scene: Scene;
   renderer: WebGLRenderer;
   world: World;
-  objects: SimulatedObject[] = [];
+  objects: ISimulatedObject[] = [];
   private rapierDebugRenderer?: RapierThreeJsDebugRenderer;
 
   constructor(container: HTMLDivElement) {
@@ -48,8 +53,8 @@ export class Simulator {
     );
   }
 
-  add(simulatedObject: SimulatedObject) {
-    this.scene.add(simulatedObject.mesh);
+  add(simulatedObject: ISimulatedObject) {
+    simulatedObject.addToScene(this.scene)
     simulatedObject.addToPhysicsWorld(this.world);
     this.objects.push(simulatedObject);
   }

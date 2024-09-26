@@ -1,5 +1,5 @@
-import { SimulatedObject } from "../simulator/SimulatedObject.ts";
-import {DoubleSide, Mesh, MeshStandardMaterial, Triangle, Vector3} from "three";
+import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
+import { Mesh, MeshStandardMaterial, Triangle, Vector3 } from "three";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
 
 export type Point3d = [x: number, y: number, y: number];
@@ -9,17 +9,18 @@ export interface PaperInit<PointId extends string> {
   boundary: PointId[];
 }
 
-export class Paper<PointId extends string> extends SimulatedObject {
+export class Paper<PointId extends string> extends SimpleSimulatedObject {
   constructor(init: PaperInit<PointId>) {
-    const vectors = init.boundary.map(
-      (pointId) => new Vector3(...init.points3d[pointId]),
-    );
-    const center = computeCenter(vectors)
+    console.log("initpaper", init)
+    const vectors = init.boundary
+      ? init.boundary.map((pointId) => new Vector3(...init.points3d[pointId]))
+      : values(init.points3d).map((point: Point3d) => new Vector3(...point));
+    const center = computeCenter(vectors);
     const normal = new Triangle()
-        .setFromPointsAndIndices(vectors, 0, 1, 2)
-        .getNormal(new Vector3(0, 0, 0))
-        .normalize()
-        .multiplyScalar(0.01);
+      .setFromPointsAndIndices(vectors, 0, 1, 2)
+      .getNormal(new Vector3(0, 0, 0))
+      .normalize()
+      .multiplyScalar(0.01);
     const convexVectors = [
       ...vectors,
       center.clone().add(normal),
@@ -28,14 +29,13 @@ export class Paper<PointId extends string> extends SimulatedObject {
     const geometry = new ConvexGeometry(convexVectors);
     const mesh = new Mesh(
       geometry,
-      new MeshStandardMaterial({ color: "green", side: DoubleSide }),
+      new MeshStandardMaterial({ color: "green" }),
     );
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     super(mesh);
   }
 }
-
 
 function computeCenter(vectors: Vector3[]): Vector3 {
   const center = new Vector3();
@@ -45,3 +45,7 @@ function computeCenter(vectors: Vector3[]): Vector3 {
   center.divideScalar(vectors.length);
   return center;
 }
+
+const values = Object.values as <K extends string, V>(
+  record: Record<K, V>,
+) => V[];

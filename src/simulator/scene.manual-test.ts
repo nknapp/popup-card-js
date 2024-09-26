@@ -1,6 +1,6 @@
 import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "three";
 import { Simulator } from "./Simulator.ts";
-import { SimulatedObject } from "./SimulatedObject.ts";
+import { SimpleSimulatedObject } from "./SimpleSimulatedObject.ts";
 
 function createFallingCube(height: number) {
   const fallingCube = new BoxGeometry(0.1, 0.1, 0.1);
@@ -14,7 +14,7 @@ function createFallingCube(height: number) {
   cube.receiveShadow = true;
   cube.castShadow = true;
 
-  return new SimulatedObject(cube);
+  return new SimpleSimulatedObject(cube);
 }
 
 export function manualTest(container: HTMLDivElement) {
@@ -28,7 +28,7 @@ export function manualTest(container: HTMLDivElement) {
   bumper.rotation.set(Math.PI / 6, Math.PI / 6, Math.PI / 10);
   bumper.receiveShadow = true;
   bumper.castShadow = true;
-  simulator.add(new SimulatedObject(bumper, { fixed: true, friction: 0 }));
+  simulator.add(new SimpleSimulatedObject(bumper, { fixed: true, friction: 0 }));
 
   const ground2 = new Mesh(
     new BoxGeometry(2, 0.05, 2),
@@ -38,7 +38,7 @@ export function manualTest(container: HTMLDivElement) {
   ground2.receiveShadow = true;
   ground2.castShadow = false;
 
-  simulator.add(new SimulatedObject(ground2, { fixed: true }));
+  simulator.add(new SimpleSimulatedObject(ground2, { fixed: true }));
 
   function addNewCube() {
     const simulatedObject = createFallingCube(1);
