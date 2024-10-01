@@ -15,16 +15,14 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
     const vectors = init.boundary
       ? init.boundary.map((pointId) => new Vector3(...init.points3d[pointId]))
       : values(init.points3d).map((point: Point3d) => new Vector3(...point));
-    const center = computeCenter(vectors);
     const normal = new Triangle()
       .setFromPointsAndIndices(vectors, 0, 1, 2)
       .getNormal(new Vector3(0, 0, 0))
       .normalize()
-      .multiplyScalar(0.01);
+      .multiplyScalar(0.001);
     const convexVectors = [
-      ...vectors,
-      center.clone().add(normal),
-      center.clone().sub(normal),
+      ...vectors.map(vector => vector.clone().add(normal)),
+      ...vectors.map(vector => vector.clone().sub(normal)),
     ];
     const geometry = new ConvexGeometry(convexVectors);
     const mesh = new Mesh(
@@ -35,15 +33,6 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
     mesh.receiveShadow = true;
     super(mesh);
   }
-}
-
-function computeCenter(vectors: Vector3[]): Vector3 {
-  const center = new Vector3();
-  for (const v of vectors) {
-    center.add(v);
-  }
-  center.divideScalar(vectors.length);
-  return center;
 }
 
 const values = Object.values as <K extends string, V>(
