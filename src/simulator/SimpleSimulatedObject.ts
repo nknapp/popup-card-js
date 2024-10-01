@@ -1,7 +1,7 @@
-import {Mesh, Scene} from "three";
+import { Mesh, Object3D, Scene } from "three";
 import type { RigidBody, World } from "../rapier";
 import { rapier } from "../rapier";
-import {ISimulatedObject} from "./Simulator.ts";
+import { ISimulatedObject } from "./Simulator.ts";
 
 interface PhysicalProperties {
   fixed: boolean;
@@ -21,6 +21,7 @@ export class SimpleSimulatedObject implements ISimulatedObject {
   constructor(
     mesh: Mesh,
     physicalProperties: Partial<PhysicalProperties> = {},
+    private debugObject?: Object3D,
   ) {
     this.mesh = mesh;
     this.physicalProperties = {
@@ -32,7 +33,14 @@ export class SimpleSimulatedObject implements ISimulatedObject {
   }
 
   public addToScene(scene: Scene) {
-    scene.add(this.mesh)
+    scene.add(this.mesh);
+  }
+
+  public addDebugObjects(scene: Scene) {
+    console.log("debugObject", this.debugObject)
+    if (this.debugObject) {
+      scene.add(this.debugObject);
+    }
   }
 
   public addToPhysicsWorld(physicsWorld: World) {
@@ -56,9 +64,10 @@ export class SimpleSimulatedObject implements ISimulatedObject {
 
   public updateFromCollider(): void {
     if (this.rigidBody != null) {
-      const t = this.rigidBody.translation();
-      this.mesh.position.set(t.x, t.y, t.z);
+      this.mesh.position.copy(this.rigidBody.translation());
       this.mesh.quaternion.copy(this.rigidBody.rotation());
+      this.debugObject?.position.copy(this.rigidBody.translation());
+      this.debugObject?.quaternion.copy(this.rigidBody.rotation());
     }
   }
 }

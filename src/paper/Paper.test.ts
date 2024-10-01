@@ -11,6 +11,7 @@ describe("Paper", () => {
         p4: [0, 1, 0],
       },
       boundary: ["p1", "p2", "p3", "p4"],
+      color: "green",
     });
 
     const position = getPosition(paper);
@@ -37,6 +38,7 @@ describe("Paper", () => {
         p4: [0, 1, 0],
       },
       boundary: ["p2", "p3", "p4"],
+      color: "green",
     });
 
     const position = getPosition(paper);

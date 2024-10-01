@@ -1,5 +1,6 @@
 import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
-import { Mesh, MeshStandardMaterial, Triangle, Vector3 } from "three";
+import { Group, Mesh, MeshStandardMaterial, Triangle, Vector3 } from "three";
+import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
 
 export type Point3d = [x: number, y: number, y: number];
@@ -7,11 +8,11 @@ export type Point3d = [x: number, y: number, y: number];
 export interface PaperInit<PointId extends string> {
   points3d: Record<PointId, Point3d>;
   boundary: PointId[];
+  color: string;
 }
 
 export class Paper<PointId extends string> extends SimpleSimulatedObject {
   constructor(init: PaperInit<PointId>) {
-    console.log("initpaper", init)
     const vectors = init.boundary
       ? init.boundary.map((pointId) => new Vector3(...init.points3d[pointId]))
       : values(init.points3d).map((point: Point3d) => new Vector3(...point));
@@ -21,20 +22,43 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
       .normalize()
       .multiplyScalar(0.001);
     const convexVectors = [
-      ...vectors.map(vector => vector.clone().add(normal)),
-      ...vectors.map(vector => vector.clone().sub(normal)),
+      ...vectors.map((vector) => vector.clone().add(normal)),
+      ...vectors.map((vector) => vector.clone().sub(normal)),
     ];
     const geometry = new ConvexGeometry(convexVectors);
     const mesh = new Mesh(
       geometry,
-      new MeshStandardMaterial({ color: "green" }),
+      new MeshStandardMaterial({ color: init.color }),
     );
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-    super(mesh);
+
+    const debugObjects = new Group();
+    debugObjects.layers.enableAll();
+    debugObjects.add(
+      ...init.boundary.map((name) => {
+        const point: Point3d = init.points3d[name];
+        const labelDiv = document.createElement("div");
+        labelDiv.style.margin = "0";
+        labelDiv.style.color = init.color;
+        labelDiv.style.padding = "5px";
+        labelDiv.style.borderRadius = "5px";
+        labelDiv.style.background = "white";
+        labelDiv.style.opacity= "0.5"
+        labelDiv.innerHTML = name;
+        const pointLabel = new CSS2DObject(labelDiv);
+        pointLabel.position.set(...point);
+        pointLabel.center.set(0, 0);
+        pointLabel.layers.set(0);
+        return pointLabel;
+      }),
+    );
+
+    super(mesh, {}, debugObjects);
   }
 }
 
 const values = Object.values as <K extends string, V>(
   record: Record<K, V>,
 ) => V[];
+

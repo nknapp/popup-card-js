@@ -7,6 +7,7 @@ export function createPaper<T extends string>(
     // TODO better typings here
     points3d: {} as Record<T, Point3d>,
     boundary: [],
+    color: "green",
     ...init,
   });
 }

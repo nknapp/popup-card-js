@@ -29,6 +29,7 @@ export function manualTest(container: HTMLDivElement) {
       folds: {
         fold: ["a","b"],
       },
+      color: "green"
     }),
   );
 

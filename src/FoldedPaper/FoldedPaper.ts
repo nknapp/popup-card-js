@@ -4,6 +4,7 @@ import { Scene, Vector3 } from "three";
 import { World } from "@dimforge/rapier3d-compat";
 import { FoldedPaperSpec } from "./FoldedPaper.types.ts";
 import { rapier } from "../rapier";
+import {mapValues} from "../utils/mapValues.ts";
 
 export class FoldedPaper<
   PointId extends string,
@@ -20,7 +21,7 @@ export class FoldedPaper<
   constructor(spec: FoldedPaperSpec<PointId, PlaneId, FoldId>) {
     this.segments = mapValues(
       spec.segments,
-      (boundary) => new Paper({ points3d: spec.points3d, boundary }),
+      (boundary) => new Paper({ points3d: spec.points3d, boundary, color: spec.color }),
     );
 
     this.folds = mapValues(spec.folds, (fold, foldId) => {
@@ -54,6 +55,13 @@ export class FoldedPaper<
       segment.addToScene(scene);
     }
   }
+
+  addDebugObjects(scene: Scene) {
+    for (const segment of Object.values(this.segments)) {
+      segment.addDebugObjects(scene);
+    }
+  }
+
   updateFromCollider() {
     for (const segment of Object.values(this.segments)) {
       segment.updateFromCollider();
@@ -64,7 +72,6 @@ export class FoldedPaper<
       segment.addToPhysicsWorld(world);
     }
     for (const joint of Object.values(this.folds)) {
-      console.log("create joint", joint, mapValues(this.segments,(segment => segment.rigidBody?.collider(0).vertices())))
       const jointData = rapier.JointData.revolute(
         joint.point1,
         joint.point1,
@@ -72,16 +79,12 @@ export class FoldedPaper<
       );
       const segment1 = this.segments[joint.segment1];
       const segment2 = this.segments[joint.segment2];
-      world.createImpulseJoint(jointData, segment1.rigidBody!, segment2.rigidBody!, true);
+      world.createImpulseJoint(
+        jointData,
+        segment1.rigidBody!,
+        segment2.rigidBody!,
+        true,
+      );
     }
   }
-}
-
-function mapValues<K extends string, I, O>(
-  obj: Record<K, I>,
-  fn: (input: I, key: K) => O,
-): Record<K, O> {
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, fn(value as I, key as K)]),
-  ) as Record<K, O>;
 }

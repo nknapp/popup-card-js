@@ -16,6 +16,7 @@ export function manualTest(container: HTMLDivElement) {
   simulator.add(new SimpleSimulatedObject(ground, { fixed: true }));
   simulator.add(
     new Paper({
+      color: "green",
       points3d: {
         p1: [-0.4, 0.5, -0.3],
         p2: [0.4, 0.5, -0.3],

@@ -19,4 +19,9 @@ export interface FoldedPaperSpec<
      * A list of points connected by a fold
      */
     folds: Record<FoldId, [left: PlaneId, right: PlaneId]>;
+
+    /**
+     * A string representing the color. CSS values are permitted here.
+     */
+    color: string
 }
