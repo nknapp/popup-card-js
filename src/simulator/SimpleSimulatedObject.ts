@@ -11,6 +11,8 @@ interface PhysicalProperties {
    */
   friction: number;
   restitution: number;
+  density: number;
+  dominance: number
 }
 
 export class SimpleSimulatedObject implements ISimulatedObject {
@@ -28,6 +30,8 @@ export class SimpleSimulatedObject implements ISimulatedObject {
       fixed: false,
       friction: 1,
       restitution: 0,
+      density: 1,
+      dominance: 0,
       ...physicalProperties,
     };
   }
@@ -47,8 +51,11 @@ export class SimpleSimulatedObject implements ISimulatedObject {
       this.physicalProperties.fixed
         ? rapier.RigidBodyType.Fixed
         : rapier.RigidBodyType.Dynamic,
-    );
+    )
+      .setLinearDamping(1)
+      .setAngularDamping(1.3);
     rigidBodyDesc.setCcdEnabled(true);
+    rigidBodyDesc.setDominanceGroup(this.physicalProperties.dominance)
     this.rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
     const positions = this.mesh.geometry.getAttribute("position");
     const colliderDesc = rapier.ColliderDesc.convexHull(
@@ -59,6 +66,8 @@ export class SimpleSimulatedObject implements ISimulatedObject {
     this.rigidBody.setTranslation(this.mesh.position, false);
     this.rigidBody.setRotation(this.mesh.quaternion, false);
     collider.setRestitution(this.physicalProperties.restitution);
+    collider.setDensity(this.physicalProperties.density);
+
   }
 
   public updateFromCollider(): void {

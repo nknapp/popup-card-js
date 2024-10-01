@@ -17,6 +17,7 @@ export interface FoldedPaperSpec<
      */
     segments: Record<PlaneId, PointId[]>
 
+    dominance?: Record<PlaneId, number>
     /**
      * Segments of the paper that are physically fixed in one location.
      * This is mostly used for one side of the base card

@@ -4,7 +4,7 @@ import { FoldedPaper } from "./FoldedPaper.ts";
 import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
 export function manualTest(container: HTMLDivElement) {
-  const simulator = new Simulator(container);
+  const simulator = new Simulator(container, { gravity: 0 });
 
   const ground = new Mesh(
     new BoxGeometry(2, 0.05, 2),
@@ -17,19 +17,20 @@ export function manualTest(container: HTMLDivElement) {
   simulator.add(
     new FoldedPaper({
       points3d: {
-        p1: [.3,0,.5],
-        p2: [.3,0,-.5],
-        p3: [0,0,0],
-        p4: [-.2,.5,0],
+        p1: [0.3, 0, 0.5],
+        p2: [0.3, 0, -0.5],
+        p3: [0, 0, 0],
+        p4: [-0.2, 0.5, 0],
       },
-        segments: {
-          a: ["p1","p3","p4"],
-          b: ["p2","p3","p4"]
-        },
+
+      segments: {
+        a: ["p1", "p3", "p4"],
+        b: ["p2", "p3", "p4"],
+      },
       folds: {
-        fold: ["a","b"],
+        fold: ["a", "b"],
       },
-      color: "green"
+      color: "green",
     }),
   );
 

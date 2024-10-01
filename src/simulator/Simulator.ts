@@ -13,6 +13,14 @@ export interface ISimulatedObject {
   updateFromCollider(): void;
 }
 
+interface SimulatorOptions {
+  /**
+   * The downwards gravity of the simulator.
+   * Default: 9.81
+   */
+  gravity: number
+}
+
 export class Simulator {
   scene: Scene;
   renderer: WebGLRenderer;
@@ -23,10 +31,15 @@ export class Simulator {
   debugEnabled = false
   manualTimeEnabled = false
 
-  constructor(container: HTMLDivElement) {
+  constructor(container: HTMLDivElement, options: Partial<SimulatorOptions> = {}) {
+    const { gravity } = {
+      gravity: 9.81,
+      ...options,
+    }
+    console.log(gravity, options)
     const { width, height } = container.getBoundingClientRect();
     this.scene = new Scene();
-    this.world = new rapier.World(new rapier.Vector3(0, -9.81, 0));
+    this.world = new rapier.World(new rapier.Vector3(0, -gravity, 0));
     this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.setSize(width, height);
     this.renderer.shadowMap.enabled = true;

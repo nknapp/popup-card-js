@@ -2,7 +2,7 @@ import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 import { Group, Mesh, MeshStandardMaterial, Triangle, Vector3 } from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
-import {values} from "../utils/typeObjectHelpers.ts";
+import { values } from "../utils/typeObjectHelpers.ts";
 
 export type Point3d = [x: number, y: number, y: number];
 
@@ -11,6 +11,8 @@ export interface PaperInit<PointId extends string> {
   boundary: PointId[];
   color: string;
   fixed?: boolean;
+  density?: number;
+    dominance?: number
 }
 
 export class Paper<PointId extends string> extends SimpleSimulatedObject {
@@ -46,7 +48,7 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
         labelDiv.style.padding = "5px";
         labelDiv.style.borderRadius = "5px";
         labelDiv.style.background = "white";
-        labelDiv.style.opacity= "0.5"
+        labelDiv.style.opacity = "0.5";
         labelDiv.innerHTML = name;
         const pointLabel = new CSS2DObject(labelDiv);
         pointLabel.position.set(...point);
@@ -56,6 +58,16 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
       }),
     );
 
-    super(mesh, { restitution:0, friction: 1, fixed: init.fixed ?? false}, debugObjects);
+    super(
+      mesh,
+      {
+        restitution: 0,
+        friction: 1,
+        fixed: init.fixed ?? false,
+        density: init.density ?? 1,
+          dominance: init.dominance ?? 0
+      },
+      debugObjects,
+    );
   }
 }

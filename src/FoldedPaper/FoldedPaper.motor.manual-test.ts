@@ -5,7 +5,7 @@ import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
 export function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
-  const simulator = new Simulator(container);
+  const simulator = new Simulator(container, {gravity: 0});
   simulator.debug();
   const ground = new Mesh(
     new BoxGeometry(2, 0.05, 2),
@@ -32,6 +32,11 @@ export function manualTest(container: HTMLDivElement) {
       a: ["p1", "p2", "p5", "p6"],
       b: ["p2", "p3", "p4", "p5"],
       c: ["p1", "p6", "p7"],
+    },
+    dominance: {
+      b: 120,
+      a: 119,
+      c: 118
     },
     fixedSegments: ["b"],
     folds: {
@@ -73,7 +78,7 @@ export function manualTest(container: HTMLDivElement) {
   const angle1Input = controls.querySelector<HTMLInputElement>("#foldAngle1")!;
   angle1Input.addEventListener("change", updateFoldFromElement(angle1Input, "one"));
   const angle2Input = controls.querySelector<HTMLInputElement>("#foldAngle2")!;
-  angle2Input.addEventListener("change", updateFoldFromElement(angle1Input, "two"));
+  angle2Input.addEventListener("change", updateFoldFromElement(angle2Input, "two"));
 
   simulator.add(card);
 

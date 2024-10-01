@@ -11,6 +11,10 @@ import { rapier } from "../rapier";
 import { mapValues } from "../utils/mapValues.ts";
 import { entries, values } from "../utils/typeObjectHelpers.ts";
 
+const PAPER_DENSITY = 0.01;
+const MOTOR_STIFFNESS = 2000;
+const MOTOR_DAMPING = 2000;
+
 export class FoldedPaper<
   PointId extends string,
   PlaneId extends string,
@@ -39,6 +43,8 @@ export class FoldedPaper<
           boundary,
           color: spec.color,
           fixed: spec.fixedSegments && includes(spec.fixedSegments, name),
+          density: PAPER_DENSITY,
+          dominance: spec.dominance && spec.dominance[name]
         }),
     );
 
@@ -113,11 +119,10 @@ export class FoldedPaper<
 
   setFoldAngle(motor: MotorId, angle: number) {
     this.wakeup();
-    this.motors[motor].configureMotor(
+    this.motors[motor].configureMotorPosition(
       (Math.PI * angle) / 180,
-      0,
-      20,
-      10,
+      MOTOR_STIFFNESS,
+      MOTOR_DAMPING,
     );
   }
 
