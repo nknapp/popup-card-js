@@ -37,7 +37,6 @@ export class SimpleSimulatedObject implements ISimulatedObject {
   }
 
   public addDebugObjects(scene: Scene) {
-    console.log("debugObject", this.debugObject)
     if (this.debugObject) {
       scene.add(this.debugObject);
     }

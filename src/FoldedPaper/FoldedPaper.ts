@@ -1,27 +1,45 @@
 import { Paper } from "../paper/Paper.ts";
 import { ISimulatedObject } from "../simulator/Simulator.ts";
 import { Scene, Vector3 } from "three";
-import { World } from "@dimforge/rapier3d-compat";
+import {
+  MotorModel,
+  RevoluteImpulseJoint,
+  World,
+} from "@dimforge/rapier3d-compat";
 import { FoldedPaperSpec } from "./FoldedPaper.types.ts";
 import { rapier } from "../rapier";
-import {mapValues} from "../utils/mapValues.ts";
+import { mapValues } from "../utils/mapValues.ts";
+import { entries, values } from "../utils/typeObjectHelpers.ts";
 
 export class FoldedPaper<
   PointId extends string,
   PlaneId extends string,
   FoldId extends string,
+  MotorId extends FoldId,
 > implements ISimulatedObject
 {
-  segments: Record<string, Paper<PointId>>;
+  segments: Record<PlaneId, Paper<PointId>>;
   folds: Record<
     string,
     { segment1: PlaneId; segment2: PlaneId; point1: Vector3; point2: Vector3 }
   >;
+  motors: Record<MotorId, RevoluteImpulseJoint> = {} as Record<
+    MotorId,
+    RevoluteImpulseJoint
+  >;
 
-  constructor(spec: FoldedPaperSpec<PointId, PlaneId, FoldId>) {
+  constructor(
+    private spec: FoldedPaperSpec<PointId, PlaneId, FoldId, MotorId>,
+  ) {
     this.segments = mapValues(
       spec.segments,
-      (boundary) => new Paper({ points3d: spec.points3d, boundary, color: spec.color }),
+      (boundary, name) =>
+        new Paper({
+          points3d: spec.points3d,
+          boundary,
+          color: spec.color,
+          fixed: spec.fixedSegments && includes(spec.fixedSegments, name),
+        }),
     );
 
     this.folds = mapValues(spec.folds, (fold, foldId) => {
@@ -51,27 +69,28 @@ export class FoldedPaper<
   }
 
   addToScene(scene: Scene) {
-    for (const segment of Object.values(this.segments)) {
+    for (const segment of values(this.segments)) {
       segment.addToScene(scene);
     }
   }
 
   addDebugObjects(scene: Scene) {
-    for (const segment of Object.values(this.segments)) {
+    for (const segment of values(this.segments)) {
       segment.addDebugObjects(scene);
     }
   }
 
   updateFromCollider() {
-    for (const segment of Object.values(this.segments)) {
+    for (const segment of values(this.segments)) {
       segment.updateFromCollider();
     }
   }
+
   addToPhysicsWorld(world: World) {
-    for (const segment of Object.values(this.segments)) {
+    for (const segment of values(this.segments)) {
       segment.addToPhysicsWorld(world);
     }
-    for (const joint of Object.values(this.folds)) {
+    for (const [name, joint] of entries(this.folds)) {
       const jointData = rapier.JointData.revolute(
         joint.point1,
         joint.point1,
@@ -79,12 +98,39 @@ export class FoldedPaper<
       );
       const segment1 = this.segments[joint.segment1];
       const segment2 = this.segments[joint.segment2];
-      world.createImpulseJoint(
+      const foldJoint = world.createImpulseJoint(
         jointData,
         segment1.rigidBody!,
         segment2.rigidBody!,
         true,
-      );
+      ) as RevoluteImpulseJoint;
+      if (this.spec.motors != null && includes(this.spec.motors, name)) {
+        foldJoint.configureMotorModel(MotorModel.ForceBased);
+        this.motors[name] = foldJoint;
+      }
     }
   }
+
+  setFoldAngle(motor: MotorId, angle: number) {
+    this.wakeup();
+    this.motors[motor].configureMotor(
+      (Math.PI * angle) / 180,
+      0,
+      20,
+      10,
+    );
+  }
+
+  wakeup() {
+    for (const segment of values(this.segments)) {
+      segment.rigidBody?.wakeUp();
+    }
+  }
+}
+
+function includes<Haystack extends string, Needle extends Haystack>(
+  array: Needle[],
+  item: Haystack,
+): item is Needle {
+  return array.includes(item as Needle);
 }

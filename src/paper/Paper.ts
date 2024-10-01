@@ -2,6 +2,7 @@ import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 import { Group, Mesh, MeshStandardMaterial, Triangle, Vector3 } from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
+import {values} from "../utils/typeObjectHelpers.ts";
 
 export type Point3d = [x: number, y: number, y: number];
 
@@ -9,6 +10,7 @@ export interface PaperInit<PointId extends string> {
   points3d: Record<PointId, Point3d>;
   boundary: PointId[];
   color: string;
+  fixed?: boolean;
 }
 
 export class Paper<PointId extends string> extends SimpleSimulatedObject {
@@ -54,11 +56,6 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
       }),
     );
 
-    super(mesh, {}, debugObjects);
+    super(mesh, { restitution:0, friction: 1, fixed: init.fixed ?? false}, debugObjects);
   }
 }
-
-const values = Object.values as <K extends string, V>(
-  record: Record<K, V>,
-) => V[];
-
