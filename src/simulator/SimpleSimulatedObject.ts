@@ -2,6 +2,7 @@ import { Mesh, Object3D, Scene } from "three";
 import type { RigidBody, World } from "../rapier";
 import { rapier } from "../rapier";
 import { ISimulatedObject } from "./Simulator.ts";
+import { ActiveCollisionTypes } from "@dimforge/rapier3d-compat";
 
 interface PhysicalProperties {
   fixed: boolean;
@@ -12,7 +13,8 @@ interface PhysicalProperties {
   friction: number;
   restitution: number;
   density: number;
-  dominance: number
+  dominance: number;
+  disableCollision: boolean;
 }
 
 export class SimpleSimulatedObject implements ISimulatedObject {
@@ -32,8 +34,11 @@ export class SimpleSimulatedObject implements ISimulatedObject {
       restitution: 0,
       density: 1,
       dominance: 0,
+      disableCollision: false,
       ...physicalProperties,
     };
+
+    console.log(this.physicalProperties)
   }
 
   public addToScene(scene: Scene) {
@@ -51,10 +56,10 @@ export class SimpleSimulatedObject implements ISimulatedObject {
       this.physicalProperties.fixed
         ? rapier.RigidBodyType.Fixed
         : rapier.RigidBodyType.Dynamic,
-    )
+    );
 
     rigidBodyDesc.setCcdEnabled(true);
-    rigidBodyDesc.setDominanceGroup(this.physicalProperties.dominance)
+    rigidBodyDesc.setDominanceGroup(this.physicalProperties.dominance);
     this.rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
     const positions = this.mesh.geometry.getAttribute("position");
     const colliderDesc = rapier.ColliderDesc.convexHull(
@@ -66,6 +71,10 @@ export class SimpleSimulatedObject implements ISimulatedObject {
     this.rigidBody.setRotation(this.mesh.quaternion, false);
     collider.setRestitution(this.physicalProperties.restitution);
     collider.setDensity(this.physicalProperties.density);
+    if (this.physicalProperties.disableCollision) {
+      console.log("disable collisions")
+      collider.setActiveCollisionTypes(0 as ActiveCollisionTypes);
+    }
   }
 
   public updateFromCollider(): void {
