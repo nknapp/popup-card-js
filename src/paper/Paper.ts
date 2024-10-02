@@ -13,6 +13,7 @@ export interface PaperInit<PointId extends string> {
   fixed?: boolean;
   density?: number;
     dominance?: number
+    thickness?: number
 }
 
 export class Paper<PointId extends string> extends SimpleSimulatedObject {
@@ -24,7 +25,7 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
       .setFromPointsAndIndices(vectors, 0, 1, 2)
       .getNormal(new Vector3(0, 0, 0))
       .normalize()
-      .multiplyScalar(0.001);
+      .multiplyScalar(init.thickness ? init.thickness/2 : 0.001);
     const convexVectors = [
       ...vectors.map((vector) => vector.clone().add(normal)),
       ...vectors.map((vector) => vector.clone().sub(normal)),

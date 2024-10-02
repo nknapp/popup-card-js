@@ -4,7 +4,7 @@ import { FoldedPaper } from "./FoldedPaper.ts";
 import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
 export function manualTest(container: HTMLDivElement) {
-  const simulator = new Simulator(container, { gravity: 0 });
+  const simulator = new Simulator(container, { gravity: 9.81 });
 
   const ground = new Mesh(
     new BoxGeometry(2, 0.05, 2),

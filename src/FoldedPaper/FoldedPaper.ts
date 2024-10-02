@@ -11,9 +11,16 @@ import { rapier } from "../rapier";
 import { mapValues } from "../utils/mapValues.ts";
 import { entries, values } from "../utils/typeObjectHelpers.ts";
 
-const PAPER_DENSITY = 0.01;
-const MOTOR_STIFFNESS = 2000;
-const MOTOR_DAMPING = 2000;
+const PAPER_DENSITY = 1;
+const MOTOR_STIFFNESS = 10000;
+const MOTOR_DAMPING = 10000;
+
+export interface FoldData<PlaneId extends string> {
+  segment1: PlaneId;
+  segment2: PlaneId;
+  point1: Vector3;
+  point2: Vector3;
+}
 
 export class FoldedPaper<
   PointId extends string,
@@ -23,10 +30,7 @@ export class FoldedPaper<
 > implements ISimulatedObject
 {
   segments: Record<PlaneId, Paper<PointId>>;
-  folds: Record<
-    string,
-    { segment1: PlaneId; segment2: PlaneId; point1: Vector3; point2: Vector3 }
-  >;
+  folds: Record<string, FoldData<PlaneId>>;
   motors: Record<MotorId, RevoluteImpulseJoint> = {} as Record<
     MotorId,
     RevoluteImpulseJoint
@@ -44,7 +48,8 @@ export class FoldedPaper<
           color: spec.color,
           fixed: spec.fixedSegments && includes(spec.fixedSegments, name),
           density: PAPER_DENSITY,
-          dominance: spec.dominance && spec.dominance[name]
+          dominance: spec.dominance && spec.dominance[name],
+          thickness: spec.thickness ?? 0.001,
         }),
     );
 
@@ -97,30 +102,49 @@ export class FoldedPaper<
       segment.addToPhysicsWorld(world);
     }
     for (const [name, joint] of entries(this.folds)) {
-      const jointData = rapier.JointData.revolute(
-        joint.point1,
-        joint.point1,
-        joint.point1.clone().sub(joint.point2),
-      );
       const segment1 = this.segments[joint.segment1];
       const segment2 = this.segments[joint.segment2];
+
+      const jointData = this.createFoldSpringJoint(joint);
+
       const foldJoint = world.createImpulseJoint(
         jointData,
         segment1.rigidBody!,
         segment2.rigidBody!,
         true,
       ) as RevoluteImpulseJoint;
+
       if (this.spec.motors != null && includes(this.spec.motors, name)) {
-        foldJoint.configureMotorModel(MotorModel.ForceBased);
+        foldJoint.configureMotorModel(MotorModel.AccelerationBased);
         this.motors[name] = foldJoint;
       }
     }
   }
 
+  private createFoldSpringJoint(joint: {
+    segment1: PlaneId;
+    segment2: PlaneId;
+    point1: Vector3;
+    point2: Vector3;
+  }) {
+    const jointData = rapier.JointData.revolute(
+      joint.point1,
+      joint.point1,
+      joint.point1.clone().sub(joint.point2),
+    );
+    jointData.stiffness = 1;
+    jointData.damping = 1;
+    return jointData;
+  }
+
   setFoldAngle(motor: MotorId, angle: number) {
+    if (isNaN(angle)) {
+      throw new Error("Angle must be a number")
+    }
+    console.log("setFoldAngle", {motor, angle})
     this.wakeup();
     this.motors[motor].configureMotorPosition(
-      (Math.PI * angle) / 180,
+      angle,
       MOTOR_STIFFNESS,
       MOTOR_DAMPING,
     );

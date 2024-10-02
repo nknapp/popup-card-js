@@ -38,4 +38,6 @@ export interface FoldedPaperSpec<
      * A list of folds that can be manually folded
      */
     motors?: Motors[]
+
+    thickness?: number
 }

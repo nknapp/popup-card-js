@@ -52,8 +52,7 @@ export class SimpleSimulatedObject implements ISimulatedObject {
         ? rapier.RigidBodyType.Fixed
         : rapier.RigidBodyType.Dynamic,
     )
-      .setLinearDamping(1)
-      .setAngularDamping(1.3);
+
     rigidBodyDesc.setCcdEnabled(true);
     rigidBodyDesc.setDominanceGroup(this.physicalProperties.dominance)
     this.rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
@@ -67,7 +66,6 @@ export class SimpleSimulatedObject implements ISimulatedObject {
     this.rigidBody.setRotation(this.mesh.quaternion, false);
     collider.setRestitution(this.physicalProperties.restitution);
     collider.setDensity(this.physicalProperties.density);
-
   }
 
   public updateFromCollider(): void {

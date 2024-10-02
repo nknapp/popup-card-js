@@ -5,7 +5,7 @@ import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
 export function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
-  const simulator = new Simulator(container, {gravity: 0});
+  const simulator = new Simulator(container, { gravity: 0 });
   simulator.debug();
   const ground = new Mesh(
     new BoxGeometry(2, 0.05, 2),
@@ -34,9 +34,9 @@ export function manualTest(container: HTMLDivElement) {
       c: ["p1", "p6", "p7"],
     },
     dominance: {
-      b: 120,
-      a: 119,
-      c: 118
+      // b: 120,
+      // a: 119,
+      // c: 118
     },
     fixedSegments: ["b"],
     folds: {
@@ -49,15 +49,15 @@ export function manualTest(container: HTMLDivElement) {
 
   const controls = document.createElement("div");
   controls.innerHTML = `
-      <label for="foldAngle1">Angle 1</label>
-      <input id="foldAngle1" style="border: 1px solid black"
-          type="text"
-          placeholder="Enter fold angle for card here">
-      <label for="foldAngle2">Angle 2</label>
-      <input id="foldAngle2" style="border: 1px solid black"
-          type="text"
-          placeholder="Enter fold angle for card here">
+        <button class="border border-black p-1 rounded hover:bg-gray-400">one=0 two=0</button>
+        <button class="border border-black p-1 rounded hover:bg-gray-400">one=-90 two=90</button>
+        <button class="border border-black p-1 rounded hover:bg-gray-400">one=-60 two=60</button>
+        <button class="border border-black p-1 rounded hover:bg-gray-400">one=-60 two=60</button>
+        <button class="border border-black p-1 rounded hover:bg-gray-400">one=-60</button>
+        <button class="border border-black p-1 rounded hover:bg-gray-400">one=-160</button>
+        <button class="border border-black p-1 rounded hover:bg-gray-400">two=90</button>
   `;
+
   controls.style.position = "absolute";
   controls.style.display = "flex";
   controls.style.gap = "1rem";
@@ -66,23 +66,39 @@ export function manualTest(container: HTMLDivElement) {
   controls.style.background = "white";
   controls.style.padding = "0.5rem";
   container.appendChild(controls);
-
-  function updateFoldFromElement(input: HTMLInputElement, fold: "one" | "two") {
-    return () => {
-      const angle = parseInt(input.value);
-      if (isNaN(angle)) return;
-      card.setFoldAngle(fold, angle);
-    };
+  for (const button of controls.querySelectorAll("button")) {
+    button.addEventListener("click", () => {
+      const one = getNumberMatch(button, /one=([-\d]+)/);
+      if (one != null) {
+        card.setFoldAngle("one", (Number(one) * Math.PI) / 180);
+      }
+      const two = getNumberMatch(button, /two=([-\d]+)/);
+      if (two != null) {
+        card.setFoldAngle("two", (Number(two) * Math.PI) / 180);
+      }
+    });
   }
-
-  const angle1Input = controls.querySelector<HTMLInputElement>("#foldAngle1")!;
-  angle1Input.addEventListener("change", updateFoldFromElement(angle1Input, "one"));
-  const angle2Input = controls.querySelector<HTMLInputElement>("#foldAngle2")!;
-  angle2Input.addEventListener("change", updateFoldFromElement(angle2Input, "two"));
 
   simulator.add(card);
 
   return () => {
     simulator.dispose();
   };
+}
+
+function getNumberMatch(
+  button: HTMLButtonElement,
+  regex: RegExp,
+): number | null {
+  const match = button.textContent?.match(regex);
+  if (match == null) {
+    console.log(`No match:`, button.textContent, regex)
+    return null;
+  }
+  const number = Number(match[1]);
+  if (isNaN(number)) {
+    console.log(`Not a number`, button.textContent, regex, match[1])
+    return null
+  }
+  return number
 }
