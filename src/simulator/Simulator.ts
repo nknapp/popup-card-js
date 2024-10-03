@@ -26,7 +26,6 @@ interface SimulatorOptions {
    * Default: 9.81
    */
   gravity: number;
-
   cameraPosition: Point3d;
 }
 
@@ -38,12 +37,10 @@ export class Simulator {
   objects: ISimulatedObject[] = [];
   private rapierDebugRenderer?: RapierThreeJsDebugRenderer;
   debugEnabled = false;
-  manualTimeEnabled = false;
+  private controls;
+  private camera;
 
-  constructor(
-    container: HTMLDivElement,
-    options: Partial<SimulatorOptions> = {},
-  ) {
+  constructor(container: HTMLElement, options: Partial<SimulatorOptions> = {}) {
     const { gravity, cameraPosition } = {
       gravity: 9.81,
       cameraPosition: [2, 2, 2] as Point3d,
@@ -66,25 +63,16 @@ export class Simulator {
     this.labelRenderer.domElement.style.pointerEvents = "none";
     container.appendChild(this.labelRenderer.domElement);
 
-    const camera = createCamera(width / height, cameraPosition);
+    this.camera = createCamera(width / height, cameraPosition);
     this.scene.add(createLights());
-    const controls = createControls(camera, this.renderer);
-
-    const clock = new Clock();
-    this.renderer.setAnimationLoop(() => {
-      if (!this.manualTimeEnabled) {
-        this.world.step();
-      }
-      controls.update(clock.getDelta());
-      if (this.rapierDebugRenderer) {
-        this.rapierDebugRenderer.update();
-      }
-      for (const simulatedObject of this.objects) {
-        simulatedObject.updateFromCollider();
-      }
-      this.renderer.render(this.scene, camera);
-      this.labelRenderer.render(this.scene, camera);
-    });
+    this.controls = createControls(this.camera, this.renderer);
+    // TODO: The __simulator__ is only set for tests and should be moved out of this class
+    window.__simulator__ = this;
+    // TODO: The simulator should not decide whether to start the simulation based on the URL
+    // This should be done in the manual-test framework
+    if (!document.location.search.includes("&playwright=true")) {
+      this.start();
+    }
   }
 
   debug() {
@@ -100,13 +88,6 @@ export class Simulator {
     }
   }
 
-  manualTime() {
-    this.manualTimeEnabled = true;
-    this.renderer.domElement.addEventListener("click", () => {
-      this.world.step();
-    });
-  }
-
   add(simulatedObject: ISimulatedObject) {
     simulatedObject.addToScene(this.scene);
     simulatedObject.addToPhysicsWorld(this.world);
@@ -118,5 +99,41 @@ export class Simulator {
 
   dispose() {
     this.renderer.dispose();
+    this.renderer.domElement.remove();
+    this.labelRenderer.domElement.remove();
+  }
+
+  step(delta: number = 1 / 60) {
+    this.world.step();
+    this.controls.update(delta);
+  }
+
+  async runSteps(count: number): Promise<void> {
+    for (let i = 0; i < count; i++) {
+      this.step();
+    }
+    await new Promise<void>((resolve) => requestAnimationFrame(() => {
+      this.render()
+      resolve()
+    }))
+  }
+
+  start() {
+    const clock = new Clock();
+    this.renderer.setAnimationLoop(() => {
+      this.step(clock.getDelta());
+      this.render()
+    });
+  }
+
+  render() {
+    if (this.rapierDebugRenderer) {
+      this.rapierDebugRenderer.update();
+    }
+    for (const simulatedObject of this.objects) {
+      simulatedObject.updateFromCollider();
+    }
+    this.renderer.render(this.scene, this.camera);
+    this.labelRenderer.render(this.scene, this.camera);
   }
 }

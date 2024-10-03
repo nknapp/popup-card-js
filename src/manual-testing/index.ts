@@ -1,17 +1,13 @@
-import { CleanupFunction, ManualTest } from "./types.ts";
-
-const tests: Record<string, () => Promise<ManualTest>> =
-  import.meta.glob<ManualTest>("../**/*.manual-test.ts", {
-    import: "manualTest",
-  });
+import { CleanupFunction } from "./types.ts";
+import { tests, testUrls } from "../all-manual-tests.ts";
 
 let cleanupFn: CleanupFunction | null = null;
 
 export function listOfTests() {
   return `<ul class="py-4">
-      ${Object.keys(tests)
-        .map((moduleName) => {
-          return `<li class="mb-2"><a data-test-link="true" href="?test=${encodeURIComponent(moduleName)}">${moduleName}</a></li>`;
+      ${testUrls()
+        .map(({ name, url }) => {
+          return `<li class="mb-2"><a data-test-link="true" href="${url}">${name}</a></li>`;
         })
         .join("")}
     </ul>`;
@@ -21,8 +17,13 @@ export function page(appElement: HTMLDivElement) {
   appElement.innerHTML = `
         <div class="flex w-full p-8 gap-4 h-full">
             <div class="w-1/4">
-                <h2>List of tests</h2>
-                ${listOfTests()}
+                ${
+                  document.location.search.includes("playwright=true")
+                    ? ""
+                    : `<h2>List of tests</h2>
+                   ${listOfTests()}
+                `
+                }
                 <div id="error-container" class="border border-red-900 w-full min-h-20 whitespace-pre-wrap"></div>
             </div>
             <div id="test-container" class="border border-stone-500 flex-1 h-full"></div>

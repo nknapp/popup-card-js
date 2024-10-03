@@ -5,7 +5,7 @@ import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
 export function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
-  const simulator = new Simulator(container, { gravity: 0 });
+  const simulator = new Simulator(container, { gravity: 0, cameraPosition: [5,1,-1] });
   simulator.debug();
   const ground = new Mesh(
     new BoxGeometry(2, 0.05, 2),
@@ -33,11 +33,6 @@ export function manualTest(container: HTMLDivElement) {
       b: ["p2", "p3", "p4", "p5"],
       c: ["p1", "p6", "p7"],
     },
-    dominance: {
-      // b: 120,
-      // a: 119,
-      // c: 118
-    },
     fixedSegments: ["b"],
     folds: {
       one: ["a", "b"],
@@ -51,7 +46,6 @@ export function manualTest(container: HTMLDivElement) {
   controls.innerHTML = `
         <button class="border border-black p-1 rounded hover:bg-gray-400">one=0 two=0</button>
         <button class="border border-black p-1 rounded hover:bg-gray-400">one=-90 two=90</button>
-        <button class="border border-black p-1 rounded hover:bg-gray-400">one=-60 two=60</button>
         <button class="border border-black p-1 rounded hover:bg-gray-400">one=-60 two=60</button>
         <button class="border border-black p-1 rounded hover:bg-gray-400">one=-60</button>
         <button class="border border-black p-1 rounded hover:bg-gray-400">one=-160</button>

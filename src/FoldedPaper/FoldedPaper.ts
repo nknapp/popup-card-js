@@ -139,9 +139,8 @@ export class FoldedPaper<
 
   setFoldAngle(motor: MotorId, angle: number) {
     if (isNaN(angle)) {
-      throw new Error("Angle must be a number")
+      throw new Error("Angle must be a number");
     }
-    console.log("setFoldAngle", {motor, angle})
     this.wakeup();
     this.motors[motor].configureMotorPosition(
       angle,

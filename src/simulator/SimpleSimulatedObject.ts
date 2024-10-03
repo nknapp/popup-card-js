@@ -72,7 +72,6 @@ export class SimpleSimulatedObject implements ISimulatedObject {
     collider.setRestitution(this.physicalProperties.restitution);
     collider.setDensity(this.physicalProperties.density);
     if (this.physicalProperties.disableCollision) {
-      console.log("disable collisions")
       collider.setActiveCollisionTypes(0 as ActiveCollisionTypes);
     }
   }

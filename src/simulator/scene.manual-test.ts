@@ -45,11 +45,9 @@ export function manualTest(container: HTMLDivElement) {
     simulator.add(simulatedObject);
   }
 
-  const interval = setInterval(addNewCube, 2000);
   addNewCube()
 
   return () => {
-    clearInterval(interval);
     simulator.dispose();
   };
 }
