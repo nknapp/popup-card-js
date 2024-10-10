@@ -28,7 +28,9 @@ export function manualTest(container: HTMLDivElement) {
   bumper.rotation.set(Math.PI / 6, Math.PI / 6, Math.PI / 10);
   bumper.receiveShadow = true;
   bumper.castShadow = true;
-  simulator.add(new SimpleSimulatedObject(bumper, { fixed: true, friction: 0 }));
+  simulator.add(
+    new SimpleSimulatedObject(bumper, { fixed: true, friction: 0 }),
+  );
 
   const ground2 = new Mesh(
     new BoxGeometry(2, 0.05, 2),
@@ -45,7 +47,7 @@ export function manualTest(container: HTMLDivElement) {
     simulator.add(simulatedObject);
   }
 
-  addNewCube()
+  addNewCube();
 
   return () => {
     simulator.dispose();

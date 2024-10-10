@@ -112,17 +112,19 @@ export class Simulator {
     for (let i = 0; i < count; i++) {
       this.step();
     }
-    await new Promise<void>((resolve) => requestAnimationFrame(() => {
-      this.render()
-      resolve()
-    }))
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => {
+        this.render();
+        resolve();
+      }),
+    );
   }
 
   start() {
     const clock = new Clock();
     this.renderer.setAnimationLoop(() => {
       this.step(clock.getDelta());
-      this.render()
+      this.render();
     });
   }
 

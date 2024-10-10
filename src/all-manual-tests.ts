@@ -7,10 +7,7 @@ export const rawTests: Record<string, () => Promise<ManualTest>> =
 
 export const tests = Object.fromEntries(
   Object.entries(rawTests).map(([name, module]) => {
-    return [
-        name,
-        module
-    ];
+    return [name, module];
   }),
 );
 

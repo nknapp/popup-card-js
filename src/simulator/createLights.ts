@@ -24,7 +24,7 @@ function directionalLight(
 ): DirectionalLight {
   const light = new DirectionalLight(color, intensity);
   light.position.set(x, y, z);
-  light.castShadow = true
+  light.castShadow = true;
   return light;
 }
 

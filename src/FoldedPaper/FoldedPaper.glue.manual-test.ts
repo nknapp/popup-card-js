@@ -5,7 +5,10 @@ import { rapier } from "../rapier";
 
 export function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
-  const simulator = new Simulator(container, { gravity: 0, cameraPosition: [3,0.5,-1] });
+  const simulator = new Simulator(container, {
+    gravity: 0,
+    cameraPosition: [3, 0.5, -1],
+  });
   const cardThickness = 0.001;
   const card = new FoldedPaper({
     points3d: {
@@ -119,7 +122,7 @@ export function manualTest(container: HTMLDivElement) {
   glue(card.segments["b"], vfold.segments["glueLeft"]);
   glue(card.segments["a"], vfold.segments["glueRight"]);
 
-    return () => {
+  return () => {
     simulator.dispose();
   };
 }

@@ -5,7 +5,10 @@ import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
 export function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
-  const simulator = new Simulator(container, { gravity: 0, cameraPosition: [5,1,-1] });
+  const simulator = new Simulator(container, {
+    gravity: 0,
+    cameraPosition: [5, 1, -1],
+  });
   simulator.debug();
   const ground = new Mesh(
     new BoxGeometry(2, 0.05, 2),
@@ -86,13 +89,13 @@ function getNumberMatch(
 ): number | null {
   const match = button.textContent?.match(regex);
   if (match == null) {
-    console.log(`No match:`, button.textContent, regex)
+    console.log(`No match:`, button.textContent, regex);
     return null;
   }
   const number = Number(match[1]);
   if (isNaN(number)) {
-    console.log(`Not a number`, button.textContent, regex, match[1])
-    return null
+    console.log(`Not a number`, button.textContent, regex, match[1]);
+    return null;
   }
-  return number
+  return number;
 }

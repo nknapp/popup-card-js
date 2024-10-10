@@ -1,7 +1,7 @@
-import {Simulator} from "../simulator/Simulator.ts";
+import { Simulator } from "../simulator/Simulator.ts";
 
 declare global {
-    interface Window {
-        __simulator__: Simulator
-    }
+  interface Window {
+    __simulator__: Simulator;
+  }
 }

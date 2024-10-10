@@ -1,4 +1,3 @@
-
 import { Simulator } from "../simulator/Simulator.ts";
 import { Hand } from "./Hand.ts";
 import { addGround } from "../simulator/ground.test-helper.ts";
@@ -9,7 +8,7 @@ export function manualTest(container: HTMLDivElement) {
     gravity: 0,
     cameraPosition: [0.5, 0.5, 2],
   });
-  simulator.debug()
+  simulator.debug();
   addGround(simulator, { position: [0, -0.5, 0] });
 
   addPositionMarker(simulator, { position: [0, 0, 0] });

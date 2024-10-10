@@ -23,7 +23,6 @@ export class RapierThreeJsDebugRenderer {
     this.enabled = enabled;
   }
 
-
   update() {
     if (this.enabled) {
       const { vertices, colors } = this.world.debugRender();

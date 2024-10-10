@@ -38,7 +38,7 @@ export class SimpleSimulatedObject implements ISimulatedObject {
       ...physicalProperties,
     };
 
-    console.log(this.physicalProperties)
+    console.log(this.physicalProperties);
   }
 
   public addToScene(scene: Scene) {
