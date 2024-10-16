@@ -1,10 +1,21 @@
 import { defineConfig } from "vite";
-import solidPlugin from "vite-plugin-solid";
 import { configDefaults } from "vitest/config";
 
 export default defineConfig({
-  plugins: [solidPlugin()],
+  plugins: [],
+  build: {
+    lib: {
+      entry: "./src/index.ts",
+      formats: ["es"],
+      fileName: "index",
+    },
+    rollupOptions: {
+      external: ["three","@dimforge/rapier3d-compat"]
+    },
+    sourcemap: true,
+  },
   test: {
     exclude: [...configDefaults.exclude, "**/*.spec.ts"],
+    environment: "jsdom",
   },
 });

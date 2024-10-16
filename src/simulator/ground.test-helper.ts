@@ -1,7 +1,7 @@
 import { Simulator } from "./Simulator.ts";
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "three";
+import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
 import { SimpleSimulatedObject } from "./SimpleSimulatedObject.ts";
-import { Point3d } from "../model";
+import { Point3d } from "../FoldedPaper/FoldedPaper.types.ts";
 
 interface AddGroundOptions {
   position?: Point3d;

@@ -1,7 +1,13 @@
 import { ISimulatedObject } from "../simulator/Simulator.ts";
-import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Scene } from "three";
+import {
+  BoxGeometry,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  Scene,
+} from "../vendor/three";
 import { RigidBody, World } from "@dimforge/rapier3d-compat";
-import { rapier } from "../rapier";
+import { Rapier } from "../rapier";
 
 export interface HandInit {
   innerHeight: number;
@@ -54,7 +60,7 @@ export class Hand implements ISimulatedObject {
   }
   addDebugObjects(): void {}
 
-  addToPhysicsWorld(world: World): void {
+  addToPhysicsWorld(world: World, rapier: Rapier): void {
     const rigidBodyDesc = rapier.RigidBodyDesc.dynamic();
     this.rigidBody = world.createRigidBody(rigidBodyDesc);
     for (const box of this.boxes) {

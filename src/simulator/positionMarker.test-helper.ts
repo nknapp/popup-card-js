@@ -1,13 +1,13 @@
 import { Simulator } from "./Simulator.ts";
 import {
+  Group,
   BufferGeometry,
   Float32BufferAttribute,
-  Group,
   Line,
   LineBasicMaterial,
-} from "three";
-import { Point3d } from "../model";
-import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+  CSS2DObject,
+} from "../vendor/three";
+import { Point3d } from "../FoldedPaper/FoldedPaper.types.ts";
 
 interface AddGroundOptions {
   position?: Point3d;

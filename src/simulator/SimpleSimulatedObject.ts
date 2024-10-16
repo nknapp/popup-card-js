@@ -1,6 +1,5 @@
-import { Mesh, Object3D, Scene } from "three";
-import type { RigidBody, World } from "../rapier";
-import { rapier } from "../rapier";
+import { Mesh, Object3D, Scene } from "../vendor/three";
+import type {Rapier, RigidBody, World} from "../rapier";
 import { ISimulatedObject } from "./Simulator.ts";
 import { ActiveCollisionTypes } from "@dimforge/rapier3d-compat";
 
@@ -51,7 +50,7 @@ export class SimpleSimulatedObject implements ISimulatedObject {
     }
   }
 
-  public addToPhysicsWorld(physicsWorld: World) {
+  public addToPhysicsWorld(physicsWorld: World, rapier: Rapier) {
     const rigidBodyDesc = new rapier.RigidBodyDesc(
       this.physicalProperties.fixed
         ? rapier.RigidBodyType.Fixed

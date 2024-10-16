@@ -2,31 +2,42 @@ import {
   AxesHelper,
   Clock,
   PCFSoftShadowMap,
-  Scene,
   WebGLRenderer,
-} from "three";
+  Scene,
+} from "../vendor/three";
 import { createCamera } from "./createCamera.ts";
 import { createLights } from "./createLights.ts";
 import { createControls } from "./createControls.ts";
-import { rapier, World } from "../rapier";
 import { RapierThreeJsDebugRenderer } from "./RapierThreeJsDebugRenderer.ts";
-import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
-import { Point3d } from "../model";
+import { CSS2DRenderer } from "../vendor/three";
+import { Point3d } from "../FoldedPaper/FoldedPaper.types.ts";
+import RAPIER, { World } from "@dimforge/rapier3d-compat";
+import { Rapier } from "../rapier";
 
 export interface ISimulatedObject {
   addToScene(scene: Scene): void;
   addDebugObjects(scene: Scene): void;
-  addToPhysicsWorld(world: World): void;
+  addToPhysicsWorld(world: World, rapier: Rapier): void;
   updateFromCollider(): void;
 }
 
-interface SimulatorOptions {
+export interface SimulatorOptions {
   /**
    * The downwards gravity of the simulator.
    * Default: 9.81
    */
   gravity: number;
   cameraPosition: Point3d;
+}
+
+const rapierInitialized = RAPIER.init();
+
+export async function createSimulator(
+  container: HTMLElement,
+  options: Partial<SimulatorOptions> = {},
+): Promise<Simulator> {
+  await rapierInitialized;
+  return new Simulator(container, options);
 }
 
 export class Simulator {
@@ -49,7 +60,7 @@ export class Simulator {
     console.log(gravity, options);
     const { width, height } = container.getBoundingClientRect();
     this.scene = new Scene();
-    this.world = new rapier.World(new rapier.Vector3(0, -gravity, 0));
+    this.world = new RAPIER.World(new RAPIER.Vector3(0, -gravity, 0));
     this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.setSize(width, height);
     this.renderer.shadowMap.enabled = true;
@@ -90,7 +101,7 @@ export class Simulator {
 
   add(simulatedObject: ISimulatedObject) {
     simulatedObject.addToScene(this.scene);
-    simulatedObject.addToPhysicsWorld(this.world);
+    simulatedObject.addToPhysicsWorld(this.world, RAPIER);
     this.objects.push(simulatedObject);
     if (this.debugEnabled) {
       simulatedObject.addDebugObjects(this.scene);

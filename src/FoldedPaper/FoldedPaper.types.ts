@@ -4,7 +4,7 @@ export interface FoldedPaperSpec<
   PointId extends string,
   PlaneId extends string,
   FoldId extends string,
-  Motors extends FoldId,
+  MotorId extends FoldId,
 > {
   /**
    * A list of point position of the 3d unfolded shape
@@ -36,7 +36,7 @@ export interface FoldedPaperSpec<
   /**
    * A list of folds that can be manually folded
    */
-  motors?: Motors[];
+  motors?: MotorId[];
 
   thickness?: number;
 }

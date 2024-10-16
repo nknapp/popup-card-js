@@ -1,7 +1,13 @@
 import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
-import { Group, Mesh, MeshStandardMaterial, Triangle, Vector3 } from "three";
-import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
-import { ConvexGeometry } from "three/addons/geometries/ConvexGeometry.js";
+import {
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  Triangle,
+  Vector3,
+  CSS2DObject,
+  ConvexGeometry,
+} from "../vendor/three";
 import { values } from "../utils/typeObjectHelpers.ts";
 
 export type Point3d = [x: number, y: number, y: number];

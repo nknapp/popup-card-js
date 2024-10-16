@@ -36,11 +36,11 @@ export function page(appElement: HTMLDivElement) {
       window.history.pushState("", "", link.getAttribute("href"));
       event.preventDefault();
 
-      runCurrentTest();
+      runCurrentTest().catch(console.error);
     });
   }
 
-  runCurrentTest();
+  runCurrentTest().catch(console.error);
 }
 
 export async function runCurrentTest() {

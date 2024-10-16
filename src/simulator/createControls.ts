@@ -1,5 +1,5 @@
-import { Camera, type Renderer } from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { Camera, type Renderer } from "../vendor/three";
+import { OrbitControls } from "../vendor/three";
 
 export interface CreateControlsReturn {
   update(clockDelta: number): void;

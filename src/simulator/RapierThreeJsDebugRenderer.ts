@@ -1,10 +1,10 @@
 import {
-  BufferAttribute,
   BufferGeometry,
   LineBasicMaterial,
+  BufferAttribute,
   LineSegments,
   Scene,
-} from "three";
+} from "../vendor/three";
 import type { World } from "@dimforge/rapier3d-compat";
 
 export class RapierThreeJsDebugRenderer {

@@ -3,7 +3,7 @@ import { Hand } from "./Hand.ts";
 import { addGround } from "../simulator/ground.test-helper.ts";
 import { addPositionMarker } from "../simulator/positionMarker.test-helper.ts";
 
-export function manualTest(container: HTMLDivElement) {
+export async function manualTest(container: HTMLDivElement) {
   const simulator = new Simulator(container, {
     gravity: 0,
     cameraPosition: [0.5, 0.5, 2],

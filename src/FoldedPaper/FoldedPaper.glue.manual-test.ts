@@ -1,11 +1,12 @@
-import { Simulator } from "../simulator/Simulator.ts";
+import {createSimulator} from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
 import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
-import { rapier } from "../rapier";
 
-export function manualTest(container: HTMLDivElement) {
+import RAPIER from "@dimforge/rapier3d-compat";
+
+export async function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
-  const simulator = new Simulator(container, {
+  const simulator = await createSimulator(container, {
     gravity: 0,
     cameraPosition: [3, 0.5, -1],
   });
@@ -104,7 +105,7 @@ export function manualTest(container: HTMLDivElement) {
   });
 
   function glue(obj1: SimpleSimulatedObject, obj2: SimpleSimulatedObject) {
-    const jointData = rapier.JointData.fixed(
+    const jointData = RAPIER.JointData.fixed(
       { x: 0.0, y: 0.0, z: 0.0 },
       { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
       { x: 0.0, y: 0.0, z: 0.0 },

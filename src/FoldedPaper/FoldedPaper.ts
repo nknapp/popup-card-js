@@ -1,13 +1,13 @@
 import { Paper } from "../paper/Paper.ts";
 import { ISimulatedObject } from "../simulator/Simulator.ts";
-import { Scene, Vector3 } from "three";
+import { Vector3, Scene } from "../vendor/three";
 import {
   MotorModel,
   RevoluteImpulseJoint,
   World,
 } from "@dimforge/rapier3d-compat";
 import { FoldedPaperSpec } from "./FoldedPaper.types.ts";
-import { rapier } from "../rapier";
+import type { Rapier } from "../rapier";
 import { mapValues } from "../utils/mapValues.ts";
 import { entries, values } from "../utils/typeObjectHelpers.ts";
 
@@ -97,15 +97,15 @@ export class FoldedPaper<
     }
   }
 
-  addToPhysicsWorld(world: World) {
+  addToPhysicsWorld(world: World, rapier: Rapier) {
     for (const segment of values(this.segments)) {
-      segment.addToPhysicsWorld(world);
+      segment.addToPhysicsWorld(world, rapier);
     }
     for (const [name, joint] of entries(this.folds)) {
       const segment1 = this.segments[joint.segment1];
       const segment2 = this.segments[joint.segment2];
 
-      const jointData = this.createFoldSpringJoint(joint);
+      const jointData = this.createFoldSpringJoint(joint, rapier);
 
       const foldJoint = world.createImpulseJoint(
         jointData,
@@ -121,12 +121,15 @@ export class FoldedPaper<
     }
   }
 
-  private createFoldSpringJoint(joint: {
-    segment1: PlaneId;
-    segment2: PlaneId;
-    point1: Vector3;
-    point2: Vector3;
-  }) {
+  private createFoldSpringJoint(
+    joint: {
+      segment1: PlaneId;
+      segment2: PlaneId;
+      point1: Vector3;
+      point2: Vector3;
+    },
+    rapier: Rapier,
+  ) {
     const jointData = rapier.JointData.revolute(
       joint.point1,
       joint.point1,

@@ -1,10 +1,10 @@
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "three";
-import { Simulator } from "../simulator/Simulator.ts";
+import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
+import { createSimulator } from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
 import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
-export function manualTest(container: HTMLDivElement) {
-  const simulator = new Simulator(container, { gravity: 9.81 });
+export async function manualTest(container: HTMLDivElement) {
+  const simulator = await createSimulator(container, { gravity: 9.81 });
 
   const ground = new Mesh(
     new BoxGeometry(2, 0.05, 2),

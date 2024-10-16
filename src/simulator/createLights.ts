@@ -2,9 +2,9 @@ import {
   AmbientLight,
   type ColorRepresentation,
   DirectionalLight,
-  Group,
   SpotLight,
-} from "three";
+  Group,
+} from "../vendor/three";
 
 export function createLights() {
   const result = new Group();

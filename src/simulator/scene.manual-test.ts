@@ -1,5 +1,5 @@
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "three";
-import { Simulator } from "./Simulator.ts";
+import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
+import {createSimulator} from "./Simulator.ts";
 import { SimpleSimulatedObject } from "./SimpleSimulatedObject.ts";
 
 function createFallingCube(height: number) {
@@ -17,8 +17,8 @@ function createFallingCube(height: number) {
   return new SimpleSimulatedObject(cube);
 }
 
-export function manualTest(container: HTMLDivElement) {
-  const simulator = new Simulator(container);
+export async function manualTest(container: HTMLDivElement) {
+  const simulator = await createSimulator(container);
   simulator.debug();
   const bumper = new Mesh(
     new BoxGeometry(0.2, 0.1, 0.3),

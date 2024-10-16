@@ -1,27 +1,10 @@
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
-import { createSimulator } from "../simulator/Simulator.ts";
-import { FoldedPaper } from "./FoldedPaper.ts";
-import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
+import { PopupSimulator } from "./index.ts";
 
 export async function manualTest(container: HTMLDivElement) {
-  container.style.position = "relative";
-  const simulator = await createSimulator(container, {
-    gravity: 0,
-    cameraPosition: [5, 1, -1],
+  const simulator = await PopupSimulator.createPopupSimulator(container, {
+    gravity: 0
   });
-  simulator.debug();
-  const ground = new Mesh(
-    new BoxGeometry(2, 0.05, 2),
-    new MeshStandardMaterial({ color: "#fff", side: DoubleSide }),
-  );
-  ground.position.set(0, 0, 0);
-  ground.receiveShadow = true;
-  ground.castShadow = false;
-  simulator.add(
-    new SimpleSimulatedObject(ground, { fixed: true, restitution: 1 }),
-  );
-
-  const card = new FoldedPaper({
+  const cardController = simulator.addFoldedPaper({
     points3d: {
       p1: [-0.5, 0.05, 0.5],
       p2: [-0.5, 0.05, 0],
@@ -67,25 +50,24 @@ export async function manualTest(container: HTMLDivElement) {
     button.addEventListener("click", () => {
       const one = getNumberMatch(button, /one=([-\d]+)/);
       if (one != null) {
-        card.setFoldAngle("one", (Number(one) * Math.PI) / 180);
+        cardController.setFoldAngle("one", (Number(one) * Math.PI) / 180);
       }
       const two = getNumberMatch(button, /two=([-\d]+)/);
       if (two != null) {
-        card.setFoldAngle("two", (Number(two) * Math.PI) / 180);
+        cardController.setFoldAngle("two", (Number(two) * Math.PI) / 180);
       }
     });
   }
 
-  simulator.add(card);
 
   return () => {
-    simulator.dispose();
+    console.log("cleanup");
   };
 }
 
 function getNumberMatch(
-  button: HTMLButtonElement,
-  regex: RegExp,
+    button: HTMLButtonElement,
+    regex: RegExp,
 ): number | null {
   const match = button.textContent?.match(regex);
   if (match == null) {
