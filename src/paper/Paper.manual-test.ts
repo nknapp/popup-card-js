@@ -1,7 +1,7 @@
 import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
 import { Simulator } from "../simulator/Simulator.ts";
 import { Paper } from "./Paper.ts";
-import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
+import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
 export async function manualTest(container: HTMLDivElement) {
   const simulator = new Simulator(container);

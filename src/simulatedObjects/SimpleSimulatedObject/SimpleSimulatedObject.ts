@@ -1,7 +1,7 @@
-import { Mesh, Object3D, Scene } from "../vendor/three";
-import type {Rapier, RigidBody, World} from "../vendor/rapier.ts";
-import { ISimulatedObject } from "./Simulator.ts";
-import { ActiveCollisionTypes } from "../vendor/rapier";
+import { Mesh, Object3D, Scene } from "../../vendor/three.ts";
+import type {Rapier, RigidBody, World} from "../../vendor/rapier.ts";
+import { ISimulatedObject } from "../../simulator/Simulator.ts";
+import { ActiveCollisionTypes } from "../../vendor/rapier.ts";
 
 interface PhysicalProperties {
   fixed: boolean;

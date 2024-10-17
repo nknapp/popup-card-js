@@ -1,7 +1,5 @@
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
 import { createSimulator } from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
-import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
 export async function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
@@ -10,16 +8,6 @@ export async function manualTest(container: HTMLDivElement) {
     cameraPosition: [5, 1, -1],
   });
   simulator.debug();
-  const ground = new Mesh(
-    new BoxGeometry(2, 0.05, 2),
-    new MeshStandardMaterial({ color: "#fff", side: DoubleSide }),
-  );
-  ground.position.set(0, 0, 0);
-  ground.receiveShadow = true;
-  ground.castShadow = false;
-  simulator.add(
-    new SimpleSimulatedObject(ground, { fixed: true, restitution: 1 }),
-  );
 
   const card = new FoldedPaper({
     points3d: {

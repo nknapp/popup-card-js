@@ -1,7 +1,7 @@
 import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
 import { createSimulator } from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
-import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
+import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
 export async function manualTest(container: HTMLDivElement) {
   const simulator = await createSimulator(container, { gravity: 9.81 });

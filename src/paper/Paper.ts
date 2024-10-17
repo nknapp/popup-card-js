@@ -1,4 +1,4 @@
-import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
+import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 import {
   Group,
   Mesh,

@@ -1,6 +1,6 @@
 import { createSimulator } from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
-import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
+import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
 import {JointData} from "../vendor/rapier";
 
