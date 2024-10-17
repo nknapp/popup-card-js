@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64mm" height="64mm" version="1.1" viewBox="0 0 64 64" xml:space="preserve"
+     xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <marker id="TriangleStart" overflow="visible" markerHeight="6.155385" markerWidth="5.3244081"
+                orient="auto-start-reverse" preserveAspectRatio="xMidYMid" viewBox="0 0 5.3244081 6.1553851"><path transform="scale(.5)" d="m5.77 0-8.65 5v-10z" fill="context-stroke" fill-rule="evenodd" stroke="context-stroke" stroke-width="1pt"/>
+        </marker>
+    </defs>
+    <g transform="translate(-48.67 -96.73)">
+        <g transform="translate(-.5866 -.2635)" stroke="#000" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m80.74 153.3-29.99-7.968 9.553-13.02 20.53 5.428z" fill="#e6e6e6" stroke-opacity=".8896"
+                  stroke-width=".2206"/>
+            <path
+                    d="m80.82 137.7h21.28l9.663 15.61-31.03-0.055" fill="#cecece" stroke-opacity=".8896"
+                    stroke-width=".2206"/>
+            <g>
+                <path d="m80.72 148.7-14.79-8.863 7.288-35.17 15.8 9.282z" fill="#00b200" stroke-width=".265"/>
+                <path d="m88.81 114 16.64-4.801-8.983 34.93-15.68 4.532z" fill="#0f0" stroke-width=".265"/>
+                <path d="m51.63 142.4a30.9 30.9 0 0 1 12.58-15.44" fill="none" marker-end="url(#TriangleStart)"
+                      stroke="#000"
+                      opacity=".7461"/>
+            </g>
+        </g>
+    </g>
+</svg>

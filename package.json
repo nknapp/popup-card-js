@@ -16,9 +16,9 @@
     "dev:server": "vite",
     "dev:e2e": "playwright test --ui",
     "build": "pkgroll --clean-dist --sourcemap",
-    "e2e": "run-p -r e2e:*",
-    "preview": "vite preview"
+    "e2e": "run-p -r e2e:*"
   },
+  "license": "AGPL-3.0-or-later",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "devDependencies": {
