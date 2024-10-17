@@ -1,8 +1,8 @@
-import {createSimulator} from "../simulator/Simulator.ts";
+import { createSimulator } from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
 import { SimpleSimulatedObject } from "../simulator/SimpleSimulatedObject.ts";
 
-import RAPIER from "@dimforge/rapier3d-compat";
+import {JointData} from "../vendor/rapier";
 
 export async function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
@@ -105,7 +105,7 @@ export async function manualTest(container: HTMLDivElement) {
   });
 
   function glue(obj1: SimpleSimulatedObject, obj2: SimpleSimulatedObject) {
-    const jointData = RAPIER.JointData.fixed(
+    const jointData = JointData.fixed(
       { x: 0.0, y: 0.0, z: 0.0 },
       { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
       { x: 0.0, y: 0.0, z: 0.0 },

@@ -1,15 +1,11 @@
 import { Paper } from "../paper/Paper.ts";
 import { ISimulatedObject } from "../simulator/Simulator.ts";
 import { Vector3, Scene } from "../vendor/three";
-import {
-  MotorModel,
-  RevoluteImpulseJoint,
-  World,
-} from "@dimforge/rapier3d-compat";
+import { MotorModel, RevoluteImpulseJoint, World } from "../vendor/rapier";
 import { FoldedPaperSpec } from "./FoldedPaper.types.ts";
-import type { Rapier } from "../rapier";
+import type { Rapier } from "../vendor/rapier.ts";
 import { mapValues } from "../utils/mapValues.ts";
-import { entries, values } from "../utils/typeObjectHelpers.ts";
+import { TypedRecord} from "../utils/TypedRecord.ts";
 
 const PAPER_DENSITY = 1;
 const MOTOR_STIFFNESS = 10000;
@@ -80,28 +76,28 @@ export class FoldedPaper<
   }
 
   addToScene(scene: Scene) {
-    for (const segment of values(this.segments)) {
+    for (const segment of TypedRecord.values(this.segments)) {
       segment.addToScene(scene);
     }
   }
 
   addDebugObjects(scene: Scene) {
-    for (const segment of values(this.segments)) {
+    for (const segment of TypedRecord.values(this.segments)) {
       segment.addDebugObjects(scene);
     }
   }
 
   updateFromCollider() {
-    for (const segment of values(this.segments)) {
+    for (const segment of TypedRecord.values(this.segments)) {
       segment.updateFromCollider();
     }
   }
 
   addToPhysicsWorld(world: World, rapier: Rapier) {
-    for (const segment of values(this.segments)) {
+    for (const segment of TypedRecord.values(this.segments)) {
       segment.addToPhysicsWorld(world, rapier);
     }
-    for (const [name, joint] of entries(this.folds)) {
+    for (const [name, joint] of TypedRecord.entries(this.folds)) {
       const segment1 = this.segments[joint.segment1];
       const segment2 = this.segments[joint.segment2];
 
@@ -153,7 +149,7 @@ export class FoldedPaper<
   }
 
   wakeup() {
-    for (const segment of values(this.segments)) {
+    for (const segment of TypedRecord.values(this.segments)) {
       segment.rigidBody?.wakeUp();
     }
   }

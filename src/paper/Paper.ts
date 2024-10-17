@@ -8,7 +8,7 @@ import {
   CSS2DObject,
   ConvexGeometry,
 } from "../vendor/three";
-import { values } from "../utils/typeObjectHelpers.ts";
+import { TypedRecord } from "../utils/TypedRecord.ts";
 
 export type Point3d = [x: number, y: number, y: number];
 
@@ -26,7 +26,9 @@ export class Paper<PointId extends string> extends SimpleSimulatedObject {
   constructor(init: PaperInit<PointId>) {
     const vectors = init.boundary
       ? init.boundary.map((pointId) => new Vector3(...init.points3d[pointId]))
-      : values(init.points3d).map((point: Point3d) => new Vector3(...point));
+      : TypedRecord.values(init.points3d).map(
+          (point: Point3d) => new Vector3(...point),
+        );
     const normal = new Triangle()
       .setFromPointsAndIndices(vectors, 0, 1, 2)
       .getNormal(new Vector3(0, 0, 0))

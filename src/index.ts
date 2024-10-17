@@ -2,13 +2,7 @@ import {createSimulator, Simulator, SimulatorOptions} from "./simulator/Simulato
 import { FoldedPaper } from "./FoldedPaper/FoldedPaper.ts";
 import { FoldedPaperSpec } from "./FoldedPaper/FoldedPaper.types.ts";
 
-// export {
-//   type Simulator,
-//   type ISimulatedObject,
-//   createSimulator,
-// } from "./simulator/Simulator";
-
-interface FoldedPaperController<
+export interface FoldedPaperController<
   FoldId extends string,
   MotorId extends FoldId,
 > {
@@ -27,6 +21,10 @@ export class PopupSimulator {
 
   private constructor(simulator: Simulator) {
     this.simulator = simulator;
+  }
+
+  debug() {
+    this.simulator.debug()
   }
 
   addFoldedPaper<

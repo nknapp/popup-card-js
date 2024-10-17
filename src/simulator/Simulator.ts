@@ -7,12 +7,16 @@ import {
 } from "../vendor/three";
 import { createCamera } from "./createCamera.ts";
 import { createLights } from "./createLights.ts";
-import { createControls } from "./createControls.ts";
+import { createControls, CreateControlsReturn } from "./createControls.ts";
 import { RapierThreeJsDebugRenderer } from "./RapierThreeJsDebugRenderer.ts";
-import { CSS2DRenderer } from "../vendor/three";
+import { CSS2DRenderer, PerspectiveCamera } from "../vendor/three";
 import { Point3d } from "../FoldedPaper/FoldedPaper.types.ts";
-import RAPIER, { World } from "@dimforge/rapier3d-compat";
-import { Rapier } from "../rapier";
+import {
+  World,
+  type Rapier,
+  RAPIER,
+  rapierInitialized,
+} from "../vendor/rapier.ts";
 
 export interface ISimulatedObject {
   addToScene(scene: Scene): void;
@@ -30,8 +34,6 @@ export interface SimulatorOptions {
   cameraPosition: Point3d;
 }
 
-const rapierInitialized = RAPIER.init();
-
 export async function createSimulator(
   container: HTMLElement,
   options: Partial<SimulatorOptions> = {},
@@ -47,9 +49,9 @@ export class Simulator {
   world: World;
   objects: ISimulatedObject[] = [];
   private rapierDebugRenderer?: RapierThreeJsDebugRenderer;
-  debugEnabled = false;
-  private controls;
-  private camera;
+  debugEnabled: boolean = false;
+  private controls: CreateControlsReturn;
+  private readonly camera: PerspectiveCamera;
 
   constructor(container: HTMLElement, options: Partial<SimulatorOptions> = {}) {
     const { gravity, cameraPosition } = {
@@ -57,7 +59,6 @@ export class Simulator {
       cameraPosition: [2, 2, 2] as Point3d,
       ...options,
     };
-    console.log(gravity, options);
     const { width, height } = container.getBoundingClientRect();
     this.scene = new Scene();
     this.world = new RAPIER.World(new RAPIER.Vector3(0, -gravity, 0));

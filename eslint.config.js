@@ -8,4 +8,16 @@ export default [
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
+  {
+    rules: {
+      "no-restricted-imports": ["error",{
+        name: "three",
+        message: "User src/vendor/three instead"
+      },{
+        name: "@dimforge/rapier3d-compat",
+        message: "User src/vendor/rapier instead"
+      }]
+    }
+  }
+
 ];

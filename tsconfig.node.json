@@ -3,7 +3,7 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -11,18 +11,14 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "types": ["./src/manual-testing/manual-testing.d.ts"],
-
+    "noEmit": false,
+    "composite": true,
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "allowJs": true
+    "outDir": "./tmp/tsconfig.node"
   },
-  "include": ["src"],
-  "references": [{
-    "path": "./tsconfig.node.json"
-  }]
+  "include": ["playwright.config.ts", "vite.config.ts"]
 }

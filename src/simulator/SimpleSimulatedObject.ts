@@ -1,7 +1,7 @@
 import { Mesh, Object3D, Scene } from "../vendor/three";
-import type {Rapier, RigidBody, World} from "../rapier";
+import type {Rapier, RigidBody, World} from "../vendor/rapier.ts";
 import { ISimulatedObject } from "./Simulator.ts";
-import { ActiveCollisionTypes } from "@dimforge/rapier3d-compat";
+import { ActiveCollisionTypes } from "../vendor/rapier";
 
 interface PhysicalProperties {
   fixed: boolean;

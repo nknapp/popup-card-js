@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Paper Folding Demo</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: black;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="position: absolute; width: 100vw; height: 100vh"></div>
+    <div  style="position: absolute; left: 10px; top: 10px; display: grid; grid-template-columns: max-content auto; width: 50%; gap: 1rem;">
+      <label for="angle1">Angle 1:</label>
+      <input id="angle1" type="range" value="0" min="0" max="180" style="flex: 1 1 30%">
+      <label for="angle2">Angle 2:</label>
+      <input id="angle2" type="range" value="0" min="0" max="180" style="flex: 1 1 30%">
+
+    </div>
+    <script type="module">
+      import { PopupSimulator } from "popup-card-js";
+
+      const simulator = await PopupSimulator.createPopupSimulator(
+        document.querySelector("div"),
+        {
+          gravity: 0,
+        },
+      );
+      const paper = simulator.addFoldedPaper({
+          points3d: {
+              p1: [-0.5, 0.05, 0.5],
+              p2: [-0.5, 0.05, 0],
+              p3: [-0.5, 0.05, -0.5],
+              p4: [0.5, 0.05, -0.5],
+              p5: [0.5, 0.05, 0],
+              p6: [0.5, 0.05, 0.5],
+              p7: [0, 0.05, 0.8],
+          },
+          segments: {
+              a: ["p1", "p2", "p5", "p6"],
+              b: ["p2", "p3", "p4", "p5"],
+              c: ["p1", "p6", "p7"],
+          },
+          fixedSegments: ["b"],
+          folds: {
+              one: ["b", "a"],
+              two: ["a", "c"],
+          },
+          motors: ["one", "two"],
+          color: "green",
+      })
+      paper.setFoldAngle("one", 0)
+      paper.setFoldAngle("two", 0)
+      document.getElementById("angle1").addEventListener("input", (event) => {
+        paper.setFoldAngle("one", Number(event.target.value) * Math.PI / 180)
+      })
+      document.getElementById("angle2").addEventListener("input", (event) => {
+        paper.setFoldAngle("two", Number(event.target.value) * Math.PI / 180)
+      })
+    </script>
+  </body>
+</html>

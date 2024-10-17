@@ -5,7 +5,7 @@ import {
   LineSegments,
   Scene,
 } from "../vendor/three";
-import type { World } from "@dimforge/rapier3d-compat";
+import type { World } from "../vendor/rapier";
 
 export class RapierThreeJsDebugRenderer {
   mesh: LineSegments;

@@ -6,8 +6,8 @@ import {
   MeshStandardMaterial,
   Scene,
 } from "../vendor/three";
-import { RigidBody, World } from "@dimforge/rapier3d-compat";
-import { Rapier } from "../rapier";
+import { RigidBody, World } from "../vendor/rapier";
+import { Rapier } from "../vendor/rapier.ts";
 
 export interface HandInit {
   innerHeight: number;
