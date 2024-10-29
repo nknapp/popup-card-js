@@ -2,7 +2,7 @@ import { createSimulator } from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
 import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
-import {JointData} from "../vendor/rapier";
+import { JointData, rapierInitialized } from "../vendor/rapier";
 
 export async function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
@@ -105,19 +105,21 @@ export async function manualTest(container: HTMLDivElement) {
   });
 
   function glue(obj1: SimpleSimulatedObject, obj2: SimpleSimulatedObject) {
-    const jointData = JointData.fixed(
-      { x: 0.0, y: 0.0, z: 0.0 },
-      { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
-      { x: 0.0, y: 0.0, z: 0.0 },
-      { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
-    );
-    const glueJoint = simulator.world.createImpulseJoint(
-      jointData,
-      obj1.rigidBody!,
-      obj2.rigidBody!,
-      true,
-    );
-    glueJoint.setContactsEnabled(true);
+    rapierInitialized.then(() => {
+      const jointData = JointData.fixed(
+        { x: 0.0, y: 0.0, z: 0.0 },
+        { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
+        { x: 0.0, y: 0.0, z: 0.0 },
+        { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
+      );
+      const glueJoint = simulator.world.createImpulseJoint(
+        jointData,
+        obj1.rigidBody!,
+        obj2.rigidBody!,
+        true,
+      );
+      glueJoint.setContactsEnabled(true);
+    });
   }
 
   glue(card.segments["b"], vfold.segments["glueLeft"]);

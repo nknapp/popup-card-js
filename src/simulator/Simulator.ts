@@ -16,12 +16,17 @@ import {
   type Rapier,
   RAPIER,
   rapierInitialized,
+  JointData,
 } from "../vendor/rapier.ts";
+import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
 export interface ISimulatedObject {
   addToScene(scene: Scene): void;
+
   addDebugObjects(scene: Scene): void;
+
   addToPhysicsWorld(world: World, rapier: Rapier): void;
+
   updateFromCollider(): void;
 }
 
@@ -34,11 +39,10 @@ export interface SimulatorOptions {
   cameraPosition: Point3d;
 }
 
-export async function createSimulator(
+export function createSimulator(
   container: HTMLElement,
   options: Partial<SimulatorOptions> = {},
-): Promise<Simulator> {
-  await rapierInitialized;
+): Simulator {
   return new Simulator(container, options);
 }
 
@@ -46,7 +50,7 @@ export class Simulator {
   scene: Scene;
   renderer: WebGLRenderer;
   private labelRenderer: CSS2DRenderer;
-  world: World;
+  world: World = null!;
   objects: ISimulatedObject[] = [];
   private rapierDebugRenderer?: RapierThreeJsDebugRenderer;
   debugEnabled: boolean = false;
@@ -61,7 +65,6 @@ export class Simulator {
     };
     const { width, height } = container.getBoundingClientRect();
     this.scene = new Scene();
-    this.world = new RAPIER.World(new RAPIER.Vector3(0, -gravity, 0));
     this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.setSize(width, height);
     this.renderer.shadowMap.enabled = true;
@@ -78,6 +81,11 @@ export class Simulator {
     this.camera = createCamera(width / height, cameraPosition);
     this.scene.add(createLights());
     this.controls = createControls(this.camera, this.renderer);
+
+    rapierInitialized.then(() => {
+      this.world = new RAPIER.World(new RAPIER.Vector3(0, -gravity, 0));
+    });
+
     // TODO: The __simulator__ is only set for tests and should be moved out of this class
     window.__simulator__ = this;
     // TODO: The simulator should not decide whether to start the simulation based on the URL
@@ -89,10 +97,12 @@ export class Simulator {
 
   debug() {
     this.debugEnabled = true;
-    this.rapierDebugRenderer = new RapierThreeJsDebugRenderer(
-      this.scene,
-      this.world,
-    );
+    rapierInitialized.then(() => {
+      this.rapierDebugRenderer = new RapierThreeJsDebugRenderer(
+        this.scene,
+        this.world,
+      );
+    });
     const axesHelper = new AxesHelper(5);
     this.scene.add(axesHelper);
     for (const obj of this.objects) {
@@ -102,11 +112,31 @@ export class Simulator {
 
   add(simulatedObject: ISimulatedObject) {
     simulatedObject.addToScene(this.scene);
-    simulatedObject.addToPhysicsWorld(this.world, RAPIER);
+    rapierInitialized.then(() => {
+      simulatedObject.addToPhysicsWorld(this.world, RAPIER);
+    });
     this.objects.push(simulatedObject);
     if (this.debugEnabled) {
       simulatedObject.addDebugObjects(this.scene);
     }
+  }
+
+  glue(from: SimpleSimulatedObject, to: SimpleSimulatedObject) {
+    rapierInitialized.then(() => {
+      const jointData = JointData.fixed(
+        { x: 0.0, y: 0.0, z: 0.0 },
+        { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
+        { x: 0.0, y: 0.0, z: 0.0 },
+        { w: 1.0, x: 0.0, y: 0.0, z: 0.0 },
+      );
+      const glueJoint = this.world.createImpulseJoint(
+        jointData,
+        from.rigidBody!,
+        to.rigidBody!,
+        true,
+      );
+      glueJoint.setContactsEnabled(true);
+    });
   }
 
   dispose() {
@@ -121,6 +151,7 @@ export class Simulator {
   }
 
   async runSteps(count: number): Promise<void> {
+    await rapierInitialized;
     for (let i = 0; i < count; i++) {
       this.step();
     }
@@ -132,7 +163,8 @@ export class Simulator {
     );
   }
 
-  start() {
+  async start() {
+    await rapierInitialized;
     const clock = new Clock();
     this.renderer.setAnimationLoop(() => {
       this.step(clock.getDelta());

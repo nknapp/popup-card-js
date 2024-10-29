@@ -1,0 +1,17 @@
+---
+title: Example Guide
+description: A guide in my new Starlight docs site.
+---
+
+import { Showcase } from "../../../components/Showcase";
+import { createVFold } from "./vfold.js";
+import { createBaseCard } from "./card.js";
+
+<Showcase
+  client:load
+  shapes={{ card: createBaseCard(0.01), vfold: createVFold(0.01) }}
+  glues={[
+      [{shape: "card", segment: "b"}, {shape: "vfold", segment: "glueLeft" }],
+      [{shape: "card", segment: "a"}, {shape: "vfold", segment: "glueRight" }]
+  ]}
+/>

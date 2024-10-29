@@ -1,18 +1,18 @@
 import { PopupSimulator } from "./index.ts";
 
 export async function manualTest(container: HTMLDivElement) {
-  const simulator = await PopupSimulator.createPopupSimulator(container, {
-    gravity: 0
+  const simulator = PopupSimulator.createPopupSimulator(container, {
+    gravity: 0,
   });
-  const cardController = simulator.addFoldedPaper({
+  const cardController = simulator.addFoldedPaper("card", {
     points3d: {
-      p1: [-0.5, 0.05, 0.5],
-      p2: [-0.5, 0.05, 0],
-      p3: [-0.5, 0.05, -0.5],
-      p4: [0.5, 0.05, -0.5],
-      p5: [0.5, 0.05, 0],
-      p6: [0.5, 0.05, 0.5],
-      p7: [0, 0.05, 0.8],
+      p1: [-0.5, 0, 0.5],
+      p2: [-0.5, 0, 0],
+      p3: [-0.5, 0, -0.5],
+      p4: [0.5, 0, -0.5],
+      p5: [0.5, 0, 0],
+      p6: [0.5, 0, 0.5],
+      p7: [0, 0, 0.8],
     },
     segments: {
       a: ["p1", "p2", "p5", "p6"],
@@ -26,7 +26,56 @@ export async function manualTest(container: HTMLDivElement) {
     },
     motors: ["one", "two"],
     color: "green",
+    thickness: 0.001,
   });
+
+  simulator.addFoldedPaper("parallelFold", {
+    points3d: {
+      f1a: [-0.1, 0.001, 0.05],
+      f2a: [0.1, 0.001, 0.05],
+      f1: [-0.1, 0.001, 0.1],
+      f2: [0.1, 0.001, 0.1],
+      f3: [-0.1, 0.1, 0.0],
+      f4: [0.1, 0.1, 0.0],
+      f5: [-0.1, 0.001, -0.1],
+      f6: [0.1, 0.001, -0.1],
+      f5a: [-0.1, 0.001, -0.05],
+      f6a: [0.1, 0.001, -0.05],
+    },
+    segments: {
+      glueA: ["f1", "f2", "f2a", "f1a"],
+      glueB: ["f5", "f6", "f6a", "f5a"],
+      a: ["f1", "f2", "f3", "f4"],
+      b: ["f5", "f6", "f3", "f4"],
+    },
+    folds: {
+      glueA: ["glueA", "a"],
+      ab: ["a", "b"],
+      glueB: ["b", "glueB"],
+    },
+    motors: [],
+    color: "red",
+  });
+  simulator.addGlue(
+    {
+      shape: "card",
+      segment: "a",
+    },
+    {
+      shape: "parallelFold",
+      segment: "glueA",
+    },
+  );
+  simulator.addGlue(
+    {
+      shape: "card",
+      segment: "b",
+    },
+    {
+      shape: "parallelFold",
+      segment: "glueB",
+    },
+  );
 
   const controls = document.createElement("div");
   controls.innerHTML = `
@@ -59,15 +108,14 @@ export async function manualTest(container: HTMLDivElement) {
     });
   }
 
-
   return () => {
     console.log("cleanup");
   };
 }
 
 function getNumberMatch(
-    button: HTMLButtonElement,
-    regex: RegExp,
+  button: HTMLButtonElement,
+  regex: RegExp,
 ): number | null {
   const match = button.textContent?.match(regex);
   if (match == null) {

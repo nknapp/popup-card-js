@@ -2,6 +2,10 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
+import solidJs from "@astrojs/solid-js";
+
+import tailwind from "@astrojs/tailwind";
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -23,6 +27,12 @@ export default defineConfig({
           autogenerate: { directory: "reference" },
         },
       ],
+      customCss: ["./src/tailwind.css"],
+    }),
+    solidJs(),
+    tailwind({
+        // Disable the default base styles:
+        applyBaseStyles: false,
     }),
   ],
 });
