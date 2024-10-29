@@ -26,6 +26,7 @@ export interface ISimulatedObject {
   addDebugObjects(scene: Scene): void;
 
   addToPhysicsWorld(world: World, rapier: Rapier): void;
+  step(): void;
 
   updateFromCollider(): void;
 }
@@ -146,6 +147,9 @@ export class Simulator {
   }
 
   step(delta: number = 1 / 60) {
+    for (const simulatedObject of this.objects) {
+      simulatedObject.step()
+    }
     this.world.step();
     this.controls.update(delta);
   }

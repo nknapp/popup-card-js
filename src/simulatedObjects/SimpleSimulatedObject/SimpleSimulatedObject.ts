@@ -75,6 +75,8 @@ export class SimpleSimulatedObject implements ISimulatedObject {
     }
   }
 
+  step() {}
+
   public updateFromCollider(): void {
     if (this.rigidBody != null) {
       this.mesh.position.copy(this.rigidBody.translation());

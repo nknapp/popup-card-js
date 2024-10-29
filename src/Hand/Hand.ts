@@ -71,6 +71,9 @@ export class Hand implements ISimulatedObject {
       world.createCollider(colliderDesc!, this.rigidBody);
     }
   }
+
+  step() {}
+
   updateFromCollider(): void {
     if (this.rigidBody != null) {
       this.group.position.copy(this.rigidBody.translation());

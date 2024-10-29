@@ -18,6 +18,12 @@ export interface FoldData<PlaneId extends string> {
   point2: Vector3;
 }
 
+interface InternalMotor {
+  joint: RevoluteImpulseJoint
+  targetPosition: number;
+  currentPosition: number;
+}
+
 export class FoldedPaper<
   PointId extends string,
   PlaneId extends string,
@@ -27,10 +33,11 @@ export class FoldedPaper<
 {
   segments: Record<PlaneId, Paper<PointId>>;
   folds: Record<string, FoldData<PlaneId>>;
-  motors: Record<MotorId, RevoluteImpulseJoint> = {} as Record<
+  motors: Record<MotorId, InternalMotor> = {} as Record<
     MotorId,
-    RevoluteImpulseJoint
+    InternalMotor
   >;
+
 
   constructor(
     private spec: FoldedPaperSpec<PointId, PlaneId, FoldId, MotorId>,
@@ -112,7 +119,7 @@ export class FoldedPaper<
 
       if (this.spec.motors != null && includes(this.spec.motors, name)) {
         foldJoint.configureMotorModel(MotorModel.AccelerationBased);
-        this.motors[name] = foldJoint;
+        this.motors[name] = { joint: foldJoint, targetPosition: 0, currentPosition: 0 };
       }
     }
   }
@@ -141,12 +148,22 @@ export class FoldedPaper<
       throw new Error("Angle must be a number");
     }
     this.wakeup();
-    this.motors[motor].configureMotorPosition(
-      angle,
-      MOTOR_STIFFNESS,
-      MOTOR_DAMPING,
-    );
+    this.motors[motor].targetPosition = angle;
   }
+
+  step() {
+    const stepSize = Math.PI / 12;
+    for (const motor of TypedRecord.values(this.motors)) {
+      if (motor.currentPosition - motor.targetPosition > stepSize) {
+        motor.currentPosition-=stepSize;
+        motor.joint.configureMotorPosition(motor.currentPosition, MOTOR_STIFFNESS, MOTOR_DAMPING);
+      } else if (motor.currentPosition - motor.targetPosition < -stepSize) {
+        motor.currentPosition+=stepSize;
+        motor.joint.configureMotorPosition(motor.currentPosition, MOTOR_STIFFNESS, MOTOR_DAMPING);
+      }
+    }
+  }
+
 
   wakeup() {
     for (const segment of TypedRecord.values(this.segments)) {

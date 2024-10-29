@@ -61,15 +61,20 @@ export const Showcase: Component<ShowcaseProps> = (props) => {
     <div>
       <For each={motors()}>
         {(motor) => (
-          <input
-            min="-180"
-            max="180"
-            value="0"
-            type={"range"}
-            onInput={(event) =>
-              motor.setAngle(Number(event.currentTarget.value) * Math.PI / 180)
-            }
-          />
+          <div class={"flex items-center gap-2"}>
+            <label>{motor.label}</label>
+            <input
+              min="-180"
+              max="180"
+              value="0"
+              type={"range"}
+              onInput={(event) =>
+                motor.setAngle(
+                  (Number(event.currentTarget.value) * Math.PI) / 180,
+                )
+              }
+            />
+          </div>
         )}
       </For>
       <div ref={setContainer} class={"w-full h-96"}></div>
