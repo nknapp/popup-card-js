@@ -1,6 +1,6 @@
 import type { FoldedPaperSpec } from "popup-card-js";
 
-export function createVFold(cardThickness = 0.1): FoldedPaperSpec<any, any, any, any> {
+export function createVFold(cardThickness = 0.1): FoldedPaperSpec<string, string, string, string> {
   return {
     points3d: {
       bottomCenter: [-0.2, 0.05 + cardThickness, 0],

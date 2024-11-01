@@ -5,11 +5,11 @@ import { MotorModel, RevoluteImpulseJoint, World } from "../vendor/rapier";
 import { FoldedPaperSpec } from "./FoldedPaper.types.ts";
 import type { Rapier } from "../vendor/rapier.ts";
 import { mapValues } from "../utils/mapValues.ts";
-import { TypedRecord} from "../utils/TypedRecord.ts";
+import { TypedRecord } from "../utils/TypedRecord.ts";
 
 const PAPER_DENSITY = 1;
-const MOTOR_STIFFNESS = 10000;
-const MOTOR_DAMPING = 10000;
+const MOTOR_STIFFNESS = 100;
+const MOTOR_DAMPING = 100;
 
 export interface FoldData<PlaneId extends string> {
   segment1: PlaneId;
@@ -19,7 +19,7 @@ export interface FoldData<PlaneId extends string> {
 }
 
 interface InternalMotor {
-  joint: RevoluteImpulseJoint
+  joint: RevoluteImpulseJoint;
   targetPosition: number;
   currentPosition: number;
 }
@@ -33,11 +33,7 @@ export class FoldedPaper<
 {
   segments: Record<PlaneId, Paper<PointId>>;
   folds: Record<string, FoldData<PlaneId>>;
-  motors: Record<MotorId, InternalMotor> = {} as Record<
-    MotorId,
-    InternalMotor
-  >;
-
+  motors: Record<MotorId, InternalMotor> = {} as Record<MotorId, InternalMotor>;
 
   constructor(
     private spec: FoldedPaperSpec<PointId, PlaneId, FoldId, MotorId>,
@@ -119,7 +115,11 @@ export class FoldedPaper<
 
       if (this.spec.motors != null && includes(this.spec.motors, name)) {
         foldJoint.configureMotorModel(MotorModel.AccelerationBased);
-        this.motors[name] = { joint: foldJoint, targetPosition: 0, currentPosition: 0 };
+        this.motors[name] = {
+          joint: foldJoint,
+          targetPosition: 0,
+          currentPosition: 0,
+        };
       }
     }
   }
@@ -152,18 +152,27 @@ export class FoldedPaper<
   }
 
   step() {
-    const stepSize = Math.PI / 12;
+    const stepSize = Math.PI / 3;
     for (const motor of TypedRecord.values(this.motors)) {
+      let step: number
       if (motor.currentPosition - motor.targetPosition > stepSize) {
-        motor.currentPosition-=stepSize;
-        motor.joint.configureMotorPosition(motor.currentPosition, MOTOR_STIFFNESS, MOTOR_DAMPING);
+        step = -stepSize;
       } else if (motor.currentPosition - motor.targetPosition < -stepSize) {
-        motor.currentPosition+=stepSize;
-        motor.joint.configureMotorPosition(motor.currentPosition, MOTOR_STIFFNESS, MOTOR_DAMPING);
+        step = stepSize;
+      } else {
+        step = motor.targetPosition - motor.currentPosition
       }
+      if (step !== 0) {
+        motor.currentPosition = motor.currentPosition + step;
+        motor.joint.configureMotorPosition(
+            motor.currentPosition,
+            MOTOR_STIFFNESS,
+            MOTOR_DAMPING,
+        );
+      }
+
     }
   }
-
 
   wakeup() {
     for (const segment of TypedRecord.values(this.segments)) {
