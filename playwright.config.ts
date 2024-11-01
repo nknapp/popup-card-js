@@ -30,7 +30,7 @@ export default defineConfig({
     command: 'npm run dev:server -- --port 5173',
     url: 'http://127.0.0.1:5173',
     stdout: "pipe",
-    timeout: 10000,
+    timeout: 60000,
     reuseExistingServer: !process.env.CI,
   },
 });
