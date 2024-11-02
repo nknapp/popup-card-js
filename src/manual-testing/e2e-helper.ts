@@ -6,7 +6,6 @@ import {Page} from "@playwright/test";
  */
 export async function openAssociatedUrl(page: Page, url: string): Promise<void> {
   await page.goto(getAssociatedUrl(url));
-  await page.waitForFunction(() => document.fonts.ready);
 }
 
 
