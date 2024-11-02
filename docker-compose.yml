@@ -1,0 +1,4 @@
+services:
+  browsers:
+    build: ./playwright-docker
+    network_mode: host
