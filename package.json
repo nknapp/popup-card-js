@@ -23,6 +23,7 @@
   "module": "./dist/index.js",
   "devDependencies": {
     "@eslint/js": "^9.10.0",
+    "@fontsource/roboto": "^5.1.0",
     "@playwright/test": "^1.47.2",
     "@types/node": "^22.7.4",
     "@vitest/browser": "^2.1.2",
@@ -44,8 +45,8 @@
     "vitest": "^2.1.1"
   },
   "dependencies": {
-    "@types/three": "^0.168.0",
     "@dimforge/rapier3d-compat": "^0.14.0",
+    "@types/three": "^0.168.0",
     "three": "^0.168.0"
   }
 }

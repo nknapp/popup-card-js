@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { getAssociatedUrl } from "../manual-testing/e2e-helper.ts";
+import { openAssociatedUrl } from "../manual-testing/e2e-helper.ts";
 import { simulateSteps } from "../manual-testing/simulateSteps.test-helper.ts";
 
 test("FoldedPaper.motor", async ({ page }) => {
-  await page.goto(getAssociatedUrl(import.meta.url));
+  await openAssociatedUrl(page, import.meta.url);
+  await page.waitForFunction(() => document.fonts.ready);
 
   await page.getByText("one=-60 two=60").click();
   await simulateSteps(page, 500);
