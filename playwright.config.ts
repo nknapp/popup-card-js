@@ -28,15 +28,6 @@ export default defineConfig({
         },
       },
     },
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-        connectOptions: {
-          wsEndpoint: "ws://localhost:3000/",
-        },
-      },
-    },
   ],
   webServer: {
     command: "npm run dev:server -- --port 5173",
