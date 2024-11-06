@@ -5,75 +5,54 @@ import {
   For,
   onCleanup,
 } from "solid-js";
-import { PopupSimulator } from "popup-card-js";
-import type { FoldedPaperSpec } from "popup-card-js";
+import { type PopupSimulation, PopupSimulator } from "popup-card-js";
 
 export interface ShowcaseProps {
-  shapes: Record<string, FoldedPaperSpec<string, string, string, string>>;
-  glues: [
-    from: { shape: string; segment: string },
-    to: { shape: string; segment: string },
-  ][];
+  simulation: PopupSimulation;
 }
 
-interface Motors {
-  label: string;
-
-  setAngle(angle: number): void;
+interface Motor {
+  shape: string;
+  motor: string;
 }
+
+export const angles = [-180, -135, -90, -45, 0, 45, 90, 135, 180] as const;
 
 export const Showcase: Component<ShowcaseProps> = (props) => {
   const [container, setContainer] = createSignal<HTMLDivElement>();
-  const [motors, setMotors] = createSignal<Motors[]>([]);
+
+  let simulator: PopupSimulator | null = null
 
   createEffect(async () => {
     const containerEl = container();
     if (containerEl != null) {
       console.log("creating simulator");
-      const simulator = PopupSimulator.createPopupSimulator(containerEl, {
+      simulator = PopupSimulator.createPopupSimulator(containerEl, {
         gravity: 0,
       });
-      for (const [id, shape] of Object.entries(props.shapes)) {
-        const handle = simulator.addFoldedPaper(id, shape);
-        for (const motorId of shape.motors ?? []) {
-          setMotors((motors) => {
-            return [
-              ...motors,
-              {
-                label: `${id}-${motorId}`,
-                setAngle: (angle) => handle.setFoldAngle(motorId, angle),
-              },
-            ];
-          });
-        }
-      }
-      for (const glue of props.glues) {
-        simulator.addGlue(glue[0], glue[1]);
-      }
+      simulator.load(props.simulation);
 
       onCleanup(() => {
-        simulator.dispose();
+        simulator?.dispose();
       });
     }
   });
 
   return (
     <div>
-      <For each={motors()}>
+      <For each={getMotors(props.simulation)}>
         {(motor) => (
-          <div class={"flex items-center gap-2"}>
-            <label>{motor.label}</label>
-            <input
-              min="-180"
-              max="180"
-              value="0"
-              type={"range"}
-              onInput={(event) =>
-                motor.setAngle(
-                  (Number(event.currentTarget.value) * Math.PI) / 180,
-                )
-              }
-            />
+          <div class={""}>
+            <div>
+              {motor.shape} - {motor.motor}
+            </div>
+            <div>
+            <For each={angles}>
+              {(angle) => <button class={"!m-0 border-white border bg-white/10 px-4"} onClick={() => {
+                simulator?.fold(motor.shape, motor.motor, angle / 180 * Math.PI )
+              }}>{angle}</button>}
+            </For>
+            </div>
           </div>
         )}
       </For>
@@ -81,3 +60,16 @@ export const Showcase: Component<ShowcaseProps> = (props) => {
     </div>
   );
 };
+
+function getMotors(simulation: PopupSimulation): Motor[] {
+  const motors: Motor[] = [];
+  for (const command of simulation.commands) {
+    if (command.type !== "addShape" || command.shape.motors == null) {
+      continue;
+    }
+    for (const motor of command.shape.motors) {
+      motors.push({ shape: command.id, motor });
+    }
+  }
+  return motors;
+}

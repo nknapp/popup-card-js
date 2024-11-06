@@ -20,7 +20,7 @@ export function createBaseCard(cardThickness = 0.1) {
         // },
         fixedSegments: ["b"],
         folds: {
-            one: ["a", "b"],
+            one: ["b", "a"],
         },
         motors: ["one"],
         color: "green",

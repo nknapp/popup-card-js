@@ -1,10 +1,10 @@
 export type Point3d = [x: number, y: number, y: number];
 
 export interface FoldedPaperSpec<
-  PointId extends string,
-  PlaneId extends string,
-  FoldId extends string,
-  MotorId extends FoldId,
+  PointId extends string = string,
+  PlaneId extends string = string,
+  FoldId extends string = string,
+  MotorId extends FoldId = FoldId,
 > {
   /**
    * A list of point position of the 3d unfolded shape

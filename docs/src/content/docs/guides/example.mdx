@@ -3,15 +3,18 @@ title: Example Guide
 description: A guide in my new Starlight docs site.
 ---
 
-import { Showcase } from "../../../components/Showcase";
-import { createVFold } from "./vfold.js";
-import { createBaseCard } from "./card.js";
+import {Showcase} from "../../../components/Showcase";
+import {createVFold} from "./vfold.js";
+import {createBaseCard} from "./card.js";
 
 <Showcase
-  client:load
-  shapes={{ card: createBaseCard(0.01), vfold: createVFold(0.01) }}
-  glues={[
-      [{shape: "card", segment: "b"}, {shape: "vfold", segment: "glueLeft" }],
-      [{shape: "card", segment: "a"}, {shape: "vfold", segment: "glueRight" }]
-  ]}
+    client:load
+    simulation={{
+        commands: [
+            {type: "addShape", id: "card", shape: createBaseCard(0.01)},
+            {type: "addShape", id: "vfold", shape: createVFold(0.01)},
+            {type: "glue", from: {shape: "card", segment: "b"}, to: {shape: "vfold", segment: "glueLeft"}},
+            {type: "glue", from: {shape: "card", segment: "a"}, to: {shape: "vfold", segment: "glueRight"}}
+        ]
+    }}
 />
