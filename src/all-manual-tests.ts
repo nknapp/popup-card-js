@@ -13,8 +13,7 @@ export const tests = Object.fromEntries(
 );
 
 export function testUrls() {
-  return TypedRecord.keys(tests).map((name) => ({
-    url: `?test=${encodeURIComponent(name)}`,
+  return TypedRecord.keys(tests).map((name) => ({url: `?test=${encodeURIComponent(name)}`,
     name,
   }));
 }

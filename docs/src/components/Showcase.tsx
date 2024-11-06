@@ -16,17 +16,16 @@ interface Motor {
   motor: string;
 }
 
-export const angles = [-180, -135, -90, -45, 0, 45, 90, 135, 180] as const;
+export const angles = [0, 90, 180] as const;
 
 export const Showcase: Component<ShowcaseProps> = (props) => {
   const [container, setContainer] = createSignal<HTMLDivElement>();
 
-  let simulator: PopupSimulator | null = null
+  let simulator: PopupSimulator | null = null;
 
   createEffect(async () => {
     const containerEl = container();
     if (containerEl != null) {
-      console.log("creating simulator");
       simulator = PopupSimulator.createPopupSimulator(containerEl, {
         gravity: 0,
       });
@@ -39,24 +38,33 @@ export const Showcase: Component<ShowcaseProps> = (props) => {
   });
 
   return (
-    <div>
+    <div class={"border p-2 my-4"}>
       <For each={getMotors(props.simulation)}>
         {(motor) => (
-          <div class={""}>
+          <div class={"flex items-center gap-2 p-2 mt-2"}>
             <div>
-              {motor.shape} - {motor.motor}
+              Fold: {motor.shape} - {motor.motor}
             </div>
-            <div>
             <For each={angles}>
-              {(angle) => <button class={"!m-0 border-white border bg-white/10 px-4"} onClick={() => {
-                simulator?.fold(motor.shape, motor.motor, angle / 180 * Math.PI )
-              }}>{angle}</button>}
+              {(angle) => (
+                <button
+                  class={"!m-0 hover:bg-accent-400"}
+                  onClick={() => {
+                    simulator?.fold(
+                      motor.shape,
+                      motor.motor,
+                      (angle / 180) * Math.PI,
+                    );
+                  }}
+                >
+                  {angle}
+                </button>
+              )}
             </For>
-            </div>
           </div>
         )}
       </For>
-      <div ref={setContainer} class={"w-full h-96"}></div>
+      <div ref={setContainer} class={"relative w-full h-96 !m-0"}></div>
     </div>
   );
 };

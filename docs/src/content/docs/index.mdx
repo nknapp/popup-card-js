@@ -3,36 +3,37 @@ title: popup-card-js
 description: Get started building your docs site with Starlight.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: A javascript library to simulate popup-cards.
   image:
     alt: A glittering, brightly colored logo
     dark: ../../assets/vfold-dark.svg
     light: ../../assets/vfold-light.svg
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Examples
+      link: /examples/vfold
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Pop-up cards and maths" >
+        A couple of months ago, I discovered pop-up cards. I created one as a present to my
+        niece and when researching it, I found [The Pop-Up Channel](https://www.youtube.com/@thepop-upchannel4919)
+        on Youtube that give you nice introduction to techniques and patterns to build those.
+        But event though many examples can be done without maths, in some cases, you need it.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Building blocks">
+		My goal is to create a DSL to create building blocks for pop-up cards. It
+        describes the unfolded 3D model of shapes, segments, folds and glue.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+	<Card title="Visualize">
+		Part of this library is to visualize such a model. Not just to show it in 3D, but also
+        to simulate the folding and unfolding of the card.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Build 2D templates">
+		The other goal is to create 2D templates that can be printed and cut out to create the
+        pop-up card.
 	</Card>
 </CardGrid>

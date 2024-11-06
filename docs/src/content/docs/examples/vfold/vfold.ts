@@ -1,16 +1,16 @@
-import type { FoldedPaperSpec } from "popup-card-js";
+import type { FoldedPaperSpec } from "dist";
 
-export function createVFold(cardThickness = 0.1): FoldedPaperSpec<string, string, string, string> {
+export function createVFold(cardThickness = 0.01 ): FoldedPaperSpec {
   return {
     points3d: {
-      bottomCenter: [-0.2, 0.05 + cardThickness, 0],
-      glueBottomLeft1: [-0.1, 0.05 + cardThickness, -0.01],
-      glueBottomLeft2: [0.3, 0.05 + cardThickness, -0.2],
+      bottomCenter: [-0.2, 0, 0],
+      glueBottomLeft1: [-0.1, 0, -0.01],
+      glueBottomLeft2: [0.3, 0, -0.2],
       topCenter: [-0.2, 0.3, 0],
-      bottomLeft: [0.3, 0.05 + cardThickness, -0.3],
-      bottomRight: [0.3, 0.05 + cardThickness, 0.3],
-      glueBottomRight1: [-0.1, 0.05 + cardThickness, 0.01],
-      glueBottomRight2: [0.3, 0.05 + cardThickness, 0.2],
+      bottomLeft: [0.3, 0, -0.3],
+      bottomRight: [0.3, 0, 0.3],
+      glueBottomRight1: [-0.1, 0, 0.01],
+      glueBottomRight2: [0.3, 0, 0.2],
     },
     segments: {
       left: ["topCenter", "bottomCenter", "bottomLeft"],
@@ -35,6 +35,5 @@ export function createVFold(cardThickness = 0.1): FoldedPaperSpec<string, string
     },
     color: "red",
     thickness: cardThickness,
-  }
-
+  };
 }
