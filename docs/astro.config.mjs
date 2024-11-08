@@ -8,7 +8,7 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  base: "popup-card-js",
+  base: "/popup-card-js",
   integrations: [
     starlight({
       title: "popup-card-js",
