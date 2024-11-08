@@ -17,7 +17,7 @@
     "@astrojs/starlight-tailwind": "^2.0.3",
     "@astrojs/tailwind": "^5.1.2",
     "astro": "^4.15.3",
-    "popup-card-js": "file:..",
+    "popup-card-js": "0.0.0",
     "sharp": "^0.32.5",
     "solid-js": "^1.9.3",
     "tailwindcss": "^3.4.14",

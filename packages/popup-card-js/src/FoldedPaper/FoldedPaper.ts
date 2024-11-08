@@ -154,23 +154,22 @@ export class FoldedPaper<
   step() {
     const stepSize = Math.PI / 3;
     for (const motor of TypedRecord.values(this.motors)) {
-      let step: number
+      let step: number;
       if (motor.currentPosition - motor.targetPosition > stepSize) {
         step = -stepSize;
       } else if (motor.currentPosition - motor.targetPosition < -stepSize) {
         step = stepSize;
       } else {
-        step = motor.targetPosition - motor.currentPosition
+        step = motor.targetPosition - motor.currentPosition;
       }
       if (step !== 0) {
         motor.currentPosition = motor.currentPosition + step;
         motor.joint.configureMotorPosition(
-            motor.currentPosition,
-            MOTOR_STIFFNESS,
-            MOTOR_DAMPING,
+          motor.currentPosition,
+          MOTOR_STIFFNESS,
+          MOTOR_DAMPING,
         );
       }
-
     }
   }
 

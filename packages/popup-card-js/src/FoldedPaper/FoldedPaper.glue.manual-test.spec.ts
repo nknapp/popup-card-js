@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openAssociatedUrl} from "../manual-testing/e2e-helper.ts";
+import { openAssociatedUrl } from "../manual-testing/e2e-helper.ts";
 import { simulateSteps } from "../manual-testing/simulateSteps.test-helper.ts";
 
 test("FoldedPaper.glue", async ({ page }) => {

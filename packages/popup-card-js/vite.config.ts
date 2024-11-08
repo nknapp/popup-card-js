@@ -5,10 +5,15 @@ import { configDefaults } from "vitest/config";
 export default defineConfig({
   plugins: [],
   build: {
-    outDir: "dist-manual-tests"
+    outDir: "dist-manual-tests",
   },
   test: {
     exclude: [...configDefaults.exclude, "**/*.spec.ts"],
     environment: "jsdom",
+  },
+  server: {
+    fs: {
+      allow: ["../.."],
+    },
   },
 });

@@ -1,4 +1,9 @@
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
+import {
+  BoxGeometry,
+  DoubleSide,
+  Mesh,
+  MeshStandardMaterial,
+} from "../vendor/three";
 import { createSimulator } from "../simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper.ts";
 import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";

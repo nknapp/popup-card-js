@@ -148,7 +148,7 @@ export class Simulator {
 
   step(delta: number = 1 / 60) {
     for (const simulatedObject of this.objects) {
-      simulatedObject.step()
+      simulatedObject.step();
     }
     this.world.step();
     this.controls.update(delta);

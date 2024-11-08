@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "outDir": "./tmp/tsconfig.node"
   },
-  "include": ["playwright.config.ts", "vite.config.ts"]
+  "include": ["playwright.config.ts", "packages/popup-card-js/vite.config.ts"]
 }

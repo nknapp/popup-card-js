@@ -1,5 +1,10 @@
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
-import {createSimulator} from "./Simulator.ts";
+import {
+  BoxGeometry,
+  DoubleSide,
+  Mesh,
+  MeshStandardMaterial,
+} from "../vendor/three";
+import { createSimulator } from "./Simulator.ts";
 import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
 function createFallingCube(height: number) {

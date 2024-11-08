@@ -3,12 +3,12 @@ title: V-Fold
 description: This file shows a simulated v-fold pop-up
 ---
 
-import {Showcase} from "../../../components/Showcase";
-import {simulation} from "./vfold/example-simulation.js";
+import { Showcase } from "../../../components/Showcase";
+import { simulation } from "./vfold/example-simulation.js";
 import simulationSource from "./vfold/example-simulation.js?raw";
 import cardSource from "./vfold/card.js?raw";
 import vfoldSource from "./vfold/vfold.js?raw";
-import {Tabs, Code, TabItem} from '@astrojs/starlight/components';
+import { Tabs, Code, TabItem } from "@astrojs/starlight/components";
 
 This example places a "card" shape, which has two segments and a motorized fold.
 Segment "b" is fixed to prevent the card from falling.
@@ -17,25 +17,20 @@ It then places a v-fold structure on top of the card and glues the glue pads
 onto the card. The buttons below allow you to fold the card (i.e. set the position to
 the fold motor)
 
-
 ## Showcase
 
-<Showcase
-    client:load
-    simulation={simulation}
-/>
+<Showcase client:load simulation={simulation} />
 
 ## Source code
 
 <Tabs>
-    <TabItem label="example.ts">
-        <Code code={simulationSource} lang="ts"/>
-    </TabItem>
-    <TabItem label="card.ts">
-        <Code code={cardSource} lang="ts"/>
-    </TabItem>
-    <TabItem label={"vfold.ts"}>
-        <Code code={vfoldSource} lang="ts"/>
-    </TabItem>
+  <TabItem label="example.ts">
+    <Code code={simulationSource} lang="ts" />
+  </TabItem>
+  <TabItem label="card.ts">
+    <Code code={cardSource} lang="ts" />
+  </TabItem>
+  <TabItem label={"vfold.ts"}>
+    <Code code={vfoldSource} lang="ts" />
+  </TabItem>
 </Tabs>
-

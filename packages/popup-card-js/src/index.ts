@@ -14,7 +14,7 @@ export interface Command {
 
 export interface AddShape extends Command {
   type: "addShape";
-  id: string
+  id: string;
   shape: FoldedPaperSpec;
 }
 
@@ -60,10 +60,10 @@ export class PopupSimulator {
     for (const command of model.commands) {
       switch (command.type) {
         case "addShape":
-          this.addShape(command.id, command.shape)
-              break;
+          this.addShape(command.id, command.shape);
+          break;
         case "glue": {
-          this.addGlue(command.from, command.to)
+          this.addGlue(command.from, command.to);
         }
       }
     }
@@ -102,6 +102,6 @@ export class PopupSimulator {
   }
 
   fold(shapeId: string, motorId: string, angle: number) {
-    this.foldedPapers[shapeId].setFoldAngle(motorId, angle)
+    this.foldedPapers[shapeId].setFoldAngle(motorId, angle);
   }
 }

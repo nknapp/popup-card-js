@@ -1,5 +1,10 @@
 import { Simulator } from "./Simulator.ts";
-import { BoxGeometry, DoubleSide, Mesh, MeshStandardMaterial } from "../vendor/three";
+import {
+  BoxGeometry,
+  DoubleSide,
+  Mesh,
+  MeshStandardMaterial,
+} from "../vendor/three";
 import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 import { Point3d } from "../FoldedPaper/FoldedPaper.types.ts";
 

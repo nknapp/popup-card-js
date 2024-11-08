@@ -1,13 +1,15 @@
-import {Page} from "@playwright/test";
+import { Page } from "@playwright/test";
 
 /**
  * Opens  the of the manual test that is associated with the current test and waits for page to become ready for visual tests
  * Call with "import.meta.url" and current page object.
  */
-export async function openAssociatedUrl(page: Page, url: string): Promise<void> {
+export async function openAssociatedUrl(
+  page: Page,
+  url: string,
+): Promise<void> {
   await page.goto(getAssociatedUrl(url));
 }
-
 
 /**
  * Returns the of the manual test that is associated with the current test.

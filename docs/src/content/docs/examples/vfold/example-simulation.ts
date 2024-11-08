@@ -1,6 +1,6 @@
-import type { PopupSimulation } from "dist";
-import {createBaseCard} from "./card.ts";
-import {createVFold} from "./vfold.ts";
+import type { PopupSimulation } from "popup-card-js";
+import { createBaseCard } from "./card";
+import { createVFold } from "./vfold";
 
 export const simulation: PopupSimulation = {
   commands: [

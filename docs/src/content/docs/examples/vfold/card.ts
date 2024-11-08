@@ -1,4 +1,4 @@
-import type { FoldedPaperSpec } from "dist";
+import type { FoldedPaperSpec } from "popup-card-js";
 
 export function createBaseCard(cardThickness = 0.1): FoldedPaperSpec {
   return {
