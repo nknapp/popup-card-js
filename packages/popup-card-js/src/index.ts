@@ -5,6 +5,7 @@ import {
 } from "./simulator/Simulator.ts";
 import { FoldedPaper } from "./FoldedPaper/FoldedPaper.ts";
 import { FoldedPaperSpec } from "./FoldedPaper/FoldedPaper.types.ts";
+import { TypedRecord } from "./utils/TypedRecord.ts";
 
 export { type FoldedPaperSpec } from "./FoldedPaper/FoldedPaper.types.ts";
 
@@ -103,5 +104,20 @@ export class PopupSimulator {
 
   fold(shapeId: string, motorId: string, angle: number) {
     this.foldedPapers[shapeId].setFoldAngle(motorId, angle);
+  }
+
+  getAllMotors(): { shapeId: string; motorId: string }[] {
+    return TypedRecord.entries(this.foldedPapers).flatMap(
+      ([shapeId, shape]) => {
+        const motors = shape.spec.motors;
+        if (motors == null) return [];
+        return motors.map((motorId) => {
+          return {
+            shapeId,
+            motorId,
+          };
+        });
+      },
+    );
   }
 }

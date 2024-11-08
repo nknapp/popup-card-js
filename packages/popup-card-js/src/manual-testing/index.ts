@@ -26,7 +26,7 @@ export function page(appElement: HTMLDivElement) {
                 }
                 <div id="error-container" class="border border-red-900 w-full min-h-20 whitespace-pre-wrap"></div>
             </div>
-            <div id="test-container" class="border border-stone-500 flex-1 h-full"></div>
+            <div id="test-container" class="border border-stone-500 flex-1 h-full relative"></div>
         <div>
     `;
 

@@ -6,7 +6,7 @@ import { JointData, rapierInitialized } from "../vendor/rapier";
 
 export async function manualTest(container: HTMLDivElement) {
   container.style.position = "relative";
-  const simulator = await createSimulator(container, {
+  const simulator = createSimulator(container, {
     gravity: 0,
     cameraPosition: [3, 0.5, -1],
   });

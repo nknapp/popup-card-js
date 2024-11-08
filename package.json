@@ -13,7 +13,9 @@
     "test": "run-s test:*",
     "build": "npm run build --workspaces --if-present",
     "build-and-test": "run-s build test",
-    "clean": "npm run clean --workspaces --if-present"
+    "clean": "npm run clean --workspaces --if-present",
+    "----- run in workspace -----": "",
+    "popup-card-js": "npm run --workspace=packages/popup-card-js"
   },
   "workspaces": [
     "packages/popup-card-js",

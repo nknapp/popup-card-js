@@ -36,7 +36,7 @@ export class FoldedPaper<
   motors: Record<MotorId, InternalMotor> = {} as Record<MotorId, InternalMotor>;
 
   constructor(
-    private spec: FoldedPaperSpec<PointId, PlaneId, FoldId, MotorId>,
+    readonly spec: FoldedPaperSpec<PointId, PlaneId, FoldId, MotorId>,
   ) {
     this.segments = mapValues(
       spec.segments,

@@ -23,7 +23,7 @@ function createFallingCube(height: number) {
 }
 
 export async function manualTest(container: HTMLDivElement) {
-  const simulator = await createSimulator(container);
+  const simulator = createSimulator(container, { gravity: 9.81 });
   simulator.debug();
   const bumper = new Mesh(
     new BoxGeometry(0.2, 0.1, 0.3),

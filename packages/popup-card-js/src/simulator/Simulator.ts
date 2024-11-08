@@ -38,6 +38,10 @@ export interface SimulatorOptions {
    */
   gravity: number;
   cameraPosition: Point3d;
+  /**
+   * How much more are the lights away than by default
+   */
+  lightScale: number;
 }
 
 export function createSimulator(
@@ -59,9 +63,10 @@ export class Simulator {
   private readonly camera: PerspectiveCamera;
 
   constructor(container: HTMLElement, options: Partial<SimulatorOptions> = {}) {
-    const { gravity, cameraPosition } = {
-      gravity: 9.81,
+    const { gravity, cameraPosition, lightScale } = {
+      gravity: 0,
       cameraPosition: [2, 2, 2] as Point3d,
+      lightScale: 1,
       ...options,
     };
     const { width, height } = container.getBoundingClientRect();
@@ -80,7 +85,7 @@ export class Simulator {
     container.appendChild(this.labelRenderer.domElement);
 
     this.camera = createCamera(width / height, cameraPosition);
-    this.scene.add(createLights());
+    this.scene.add(createLights(lightScale));
     this.controls = createControls(this.camera, this.renderer);
 
     rapierInitialized.then(() => {

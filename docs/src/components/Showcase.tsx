@@ -9,6 +9,7 @@ import { type PopupSimulation, PopupSimulator } from "popup-card-js";
 
 export interface ShowcaseProps {
   simulation: PopupSimulation;
+  debug?: boolean;
 }
 
 interface Motor {
@@ -29,6 +30,9 @@ export const Showcase: Component<ShowcaseProps> = (props) => {
       simulator = PopupSimulator.createPopupSimulator(containerEl, {
         gravity: 0,
       });
+      if (props.debug) {
+        simulator.debug();
+      }
       simulator.load(props.simulation);
 
       onCleanup(() => {
