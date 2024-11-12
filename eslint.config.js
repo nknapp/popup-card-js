@@ -22,6 +22,7 @@ export default [
           message: "User src/vendor/rapier instead",
         },
       ],
+      "@typescript-eslint/no-unused-vars": ["error", { args: "after-used" }],
     },
   },
 ];

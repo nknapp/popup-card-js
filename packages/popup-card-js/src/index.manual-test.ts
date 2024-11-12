@@ -1,5 +1,6 @@
 import { PopupSimulation, PopupSimulator } from "./index.ts";
 
+const thickness = 0.01;
 const model: PopupSimulation = {
   commands: [
     {
@@ -24,24 +25,25 @@ const model: PopupSimulation = {
         },
         motors: ["one", "two"],
         color: "green",
-        thickness: 0.001,
+        thickness: thickness,
       },
     },
     {
       type: "addShape",
       id: "parallelFold",
       shape: {
+        thickness: thickness,
         points3d: {
-          f1a: [-0.1, 0.001, 0.05],
-          f2a: [0.1, 0.001, 0.05],
-          f1: [-0.1, 0.001, 0.1],
-          f2: [0.1, 0.001, 0.1],
+          f1a: [-0.1, thickness, 0.05],
+          f2a: [0.1, thickness, 0.05],
+          f1: [-0.1, thickness, 0.1],
+          f2: [0.1, thickness, 0.1],
           f3: [-0.1, 0.1, 0.0],
           f4: [0.1, 0.1, 0.0],
-          f5: [-0.1, 0.001, -0.1],
-          f6: [0.1, 0.001, -0.1],
-          f5a: [-0.1, 0.001, -0.05],
-          f6a: [0.1, 0.001, -0.05],
+          f5: [-0.1, thickness, -0.1],
+          f6: [0.1, thickness, -0.1],
+          f5a: [-0.1, thickness, -0.05],
+          f6a: [0.1, thickness, -0.05],
         },
         segments: {
           glueA: ["f1", "f2", "f2a", "f1a"],

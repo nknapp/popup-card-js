@@ -1,23 +1,28 @@
 import {
   AxesHelper,
   Clock,
+  CSS2DRenderer,
   PCFSoftShadowMap,
-  WebGLRenderer,
+  PerspectiveCamera,
   Scene,
+  WebGLRenderer,
 } from "../vendor/three";
 import { createCamera } from "./createCamera.ts";
 import { createLights } from "./createLights.ts";
 import { createControls, CreateControlsReturn } from "./createControls.ts";
 import { RapierThreeJsDebugRenderer } from "./RapierThreeJsDebugRenderer.ts";
-import { CSS2DRenderer, PerspectiveCamera } from "../vendor/three";
 import { Point3d } from "../FoldedPaper/FoldedPaper.types.ts";
 import {
-  World,
-  type Rapier,
-  RAPIER,
-  rapierInitialized,
+  ColliderHandle,
+  EventQueue,
   JointData,
-} from "../vendor/rapier.ts";
+  RAPIER,
+  type Rapier,
+  rapierInitialized,
+  RigidBodyHandle,
+  SolverFlags,
+  World,
+} from "../vendor/rapier";
 import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
 export interface ISimulatedObject {
@@ -26,6 +31,7 @@ export interface ISimulatedObject {
   addDebugObjects(scene: Scene): void;
 
   addToPhysicsWorld(world: World, rapier: Rapier): void;
+
   step(): void;
 
   updateFromCollider(): void;
@@ -61,6 +67,9 @@ export class Simulator {
   debugEnabled: boolean = false;
   private controls: CreateControlsReturn;
   private readonly camera: PerspectiveCamera;
+  private eventQueue: EventQueue = null!;
+
+  private connectedBodies: ConnectedBodies = new ConnectedBodies();
 
   constructor(container: HTMLElement, options: Partial<SimulatorOptions> = {}) {
     const { gravity, cameraPosition, lightScale } = {
@@ -89,6 +98,7 @@ export class Simulator {
     this.controls = createControls(this.camera, this.renderer);
 
     rapierInitialized.then(() => {
+      this.eventQueue = new RAPIER.EventQueue(true);
       this.world = new RAPIER.World(new RAPIER.Vector3(0, -gravity, 0));
     });
 
@@ -120,6 +130,12 @@ export class Simulator {
     simulatedObject.addToScene(this.scene);
     rapierInitialized.then(() => {
       simulatedObject.addToPhysicsWorld(this.world, RAPIER);
+      const connected = new ConnectedBodies();
+      const joints = this.world.impulseJoints;
+      joints.forEach((joint) => {
+        connected.add(joint.body1().handle, joint.body2().handle);
+      });
+      this.connectedBodies = connected;
     });
     this.objects.push(simulatedObject);
     if (this.debugEnabled) {
@@ -155,7 +171,27 @@ export class Simulator {
     for (const simulatedObject of this.objects) {
       simulatedObject.step();
     }
-    this.world.step();
+    this.world.step(this.eventQueue, {
+      filterContactPair: (
+        ignoredCollider1: ColliderHandle,
+        ignoredCollider2: ColliderHandle,
+        body1: RigidBodyHandle,
+        body2: RigidBodyHandle,
+      ): SolverFlags | null => {
+        console.log(
+          "contact",
+          body1,
+          body2,
+          this.connectedBodies.isConnected(body1, body2),
+        );
+
+        return this.connectedBodies.isConnected(body1, body2)
+          ? null
+          : SolverFlags.COMPUTE_IMPULSE;
+      },
+      filterIntersectionPair: () => true,
+    });
+    this.eventQueue.clear();
     this.controls.update(delta);
   }
 
@@ -190,5 +226,26 @@ export class Simulator {
     }
     this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
+  }
+}
+
+class ConnectedBodies {
+  private map = new Map<number, Set<number>>();
+
+  add(body1: number, body2: number) {
+    this.getBodies(body1).add(body2);
+    this.getBodies(body2).add(body1);
+  }
+
+  isConnected(body1: number, body2: number) {
+    return this.getBodies(body1).has(body2);
+  }
+
+  private getBodies(bodyHandle: number): Set<number> {
+    if (!this.map.has(bodyHandle)) {
+      const set = new Set<number>();
+      this.map.set(bodyHandle, set);
+    }
+    return this.map.get(bodyHandle)!;
   }
 }

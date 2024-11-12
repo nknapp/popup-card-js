@@ -1,7 +1,7 @@
 import { Mesh, Object3D, Scene } from "../../vendor/three.ts";
 import type { Rapier, RigidBody, World } from "../../vendor/rapier.ts";
+import { ActiveHooks } from "../../vendor/rapier.ts";
 import { ISimulatedObject } from "../../simulator/Simulator.ts";
-import { ActiveCollisionTypes } from "../../vendor/rapier.ts";
 
 interface PhysicalProperties {
   fixed: boolean;
@@ -70,9 +70,10 @@ export class SimpleSimulatedObject implements ISimulatedObject {
     this.rigidBody.setRotation(this.mesh.quaternion, false);
     collider.setRestitution(this.physicalProperties.restitution);
     collider.setDensity(this.physicalProperties.density);
-    if (this.physicalProperties.disableCollision) {
-      collider.setActiveCollisionTypes(0 as ActiveCollisionTypes);
-    }
+    collider.setActiveHooks(
+      ActiveHooks.FILTER_CONTACT_PAIRS | ActiveHooks.FILTER_INTERSECTION_PAIRS,
+    );
+    console.log("active hooks", collider.activeHooks());
   }
 
   step() {}
