@@ -22,6 +22,7 @@ import {
   RigidBodyHandle,
   SolverFlags,
   World,
+  JointType,
 } from "../vendor/rapier";
 import { SimpleSimulatedObject } from "../simulatedObjects/SimpleSimulatedObject/SimpleSimulatedObject.ts";
 
@@ -133,7 +134,9 @@ export class Simulator {
       const connected = new ConnectedBodies();
       const joints = this.world.impulseJoints;
       joints.forEach((joint) => {
-        connected.add(joint.body1().handle, joint.body2().handle);
+        if (joint.type() === JointType.Revolute) {
+          connected.add(joint.body1().handle, joint.body2().handle);
+        }
       });
       this.connectedBodies = connected;
     });
@@ -178,13 +181,6 @@ export class Simulator {
         body1: RigidBodyHandle,
         body2: RigidBodyHandle,
       ): SolverFlags | null => {
-        console.log(
-          "contact",
-          body1,
-          body2,
-          this.connectedBodies.isConnected(body1, body2),
-        );
-
         return this.connectedBodies.isConnected(body1, body2)
           ? null
           : SolverFlags.COMPUTE_IMPULSE;
