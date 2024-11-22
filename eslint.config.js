@@ -25,4 +25,16 @@ export default [
       "@typescript-eslint/no-unused-vars": ["error", { args: "after-used" }],
     },
   },
+  {
+    ignores: ["**/*.manual-test.ts"],
+    rules: {
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "testVisualizer",
+          message: "testVisualizer should only be used in manual-tests.",
+        },
+      ],
+    },
+  },
 ];

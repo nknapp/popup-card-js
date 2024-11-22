@@ -3,17 +3,14 @@ import {
   Group,
   Mesh,
   MeshStandardMaterial,
-  Triangle,
-  Vector3,
   CSS2DObject,
-  ConvexGeometry,
 } from "../vendor/three";
-import { TypedRecord } from "../utils/TypedRecord.ts";
+import { PaperShapeGeometry } from "./PaperShapeGeometry.ts";
 
-export type Point3d = [x: number, y: number, y: number];
+export type Point3d = Readonly<[x: number, y: number, y: number]>;
 
 export interface PaperInit<PointId extends string> {
-  points3d: Record<PointId, Point3d>;
+  points3d: Readonly<Record<PointId, Point3d>>;
   boundary: PointId[];
   color: string;
   fixed?: boolean;
@@ -24,21 +21,7 @@ export interface PaperInit<PointId extends string> {
 
 export class Paper<PointId extends string> extends SimpleSimulatedObject {
   constructor(init: PaperInit<PointId>) {
-    const vectors = init.boundary
-      ? init.boundary.map((pointId) => new Vector3(...init.points3d[pointId]))
-      : TypedRecord.values(init.points3d).map(
-          (point: Point3d) => new Vector3(...point),
-        );
-    const normal = new Triangle()
-      .setFromPointsAndIndices(vectors, 0, 1, 2)
-      .getNormal(new Vector3(0, 0, 0))
-      .normalize()
-      .multiplyScalar(init.thickness ? init.thickness : 0.001);
-    const convexVectors = [
-      ...vectors.map((vector) => vector.clone().add(normal)),
-      ...vectors.map((vector) => vector.clone().sub(normal)),
-    ];
-    const geometry = new ConvexGeometry(convexVectors);
+    const geometry = new PaperShapeGeometry(init);
     const mesh = new Mesh(
       geometry,
       new MeshStandardMaterial({ color: init.color }),

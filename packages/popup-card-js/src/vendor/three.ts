@@ -32,4 +32,6 @@ export {
   DirectionalLight,
   SpotLight,
   Object3D,
+  Matrix4,
+  ConeGeometry,
 } from "three";

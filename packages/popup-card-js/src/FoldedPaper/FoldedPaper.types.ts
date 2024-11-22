@@ -1,4 +1,4 @@
-export type Point3d = [x: number, y: number, y: number];
+export type Point3d = Readonly<[x: number, y: number, y: number]>;
 
 export interface FoldedPaperSpec<
   PointId extends string = string,
