@@ -10,7 +10,7 @@ describe("iterateSegments", () => {
           folds: [],
         }),
       ),
-    ).toEqual(["A"]);
+    ).toEqual([["A", []]]);
   });
 
   it("follows segments along folds", () => {
@@ -21,7 +21,10 @@ describe("iterateSegments", () => {
           folds: [["A", "B"]],
         }),
       ),
-    ).toEqual(["A", "B"]);
+    ).toEqual([
+      ["A", []],
+      ["B", ["A"]],
+    ]);
   });
 
   it("throws if there are unconnected segments", () => {
@@ -46,7 +49,11 @@ describe("iterateSegments", () => {
           ],
         }),
       ),
-    ).toEqual(["A", "B", "C"]);
+    ).toEqual([
+      ["A", []],
+      ["B", ["A"]],
+      ["C", ["A", "B"]],
+    ]);
   });
 
   it("follows multiple segments adjacent to the same", () => {
@@ -59,10 +66,13 @@ describe("iterateSegments", () => {
         ],
       }),
     );
-    expect(result[0]).toEqual("A");
-    expect(result).toHaveLength(3);
-    expect(result.indexOf("B")).toBeGreaterThan(0);
-    expect(result.indexOf("C")).toBeGreaterThan(0);
+    expect(new Map(result)).toEqual(
+      new Map([
+        ["A", []],
+        ["B", ["A"]],
+        ["C", ["A"]],
+      ]),
+    );
   });
 
   it("follows folds in both directions", () => {
@@ -75,10 +85,13 @@ describe("iterateSegments", () => {
         ],
       }),
     );
-    expect(result[0]).toEqual("A");
-    expect(result).toHaveLength(3);
-    expect(result.indexOf("B")).toBeGreaterThan(0);
-    expect(result.indexOf("C")).toBeGreaterThan(0);
+    expect(new Map(result)).toEqual(
+      new Map([
+        ["A", []],
+        ["B", ["A"]],
+        ["C", ["A"]],
+      ]),
+    );
   });
 
   it("complex test", () => {
@@ -93,11 +106,19 @@ describe("iterateSegments", () => {
         ],
       }),
     );
-    expect(result).toEqual(["A", "C", "B", "D", "E"]);
+    expect(new Map(result)).toEqual(
+      new Map([
+        ["A", []],
+        ["C", ["A"]],
+        ["B", ["A", "C"]],
+        ["D", ["A", "C"]],
+        ["E", ["A", "C", "D"]],
+      ]),
+    );
   });
 });
 
-function getUpTo20Items(items: Iterable<string>): string[] {
+function getUpTo20Items<T>(items: Iterable<T>): T[] {
   const result = [];
   for (const item of items) {
     result.push(item);
