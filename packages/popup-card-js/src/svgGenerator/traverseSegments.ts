@@ -3,7 +3,7 @@ export interface TraverseSegmentsInput {
   folds: [left: string, right: string][];
 }
 
-export type TraverseResult = [segment: string, path: string[]];
+export type TraverseResult = [segment: string, previous: string | null];
 
 export function traverseSegments({
   segments,
@@ -26,7 +26,7 @@ class Traverser {
   }
 
   *traverse() {
-    for (const result of this._traverse()) {
+    for (const result of this.#traverseFolds(this.input.segments[0], null)) {
       yield result;
     }
     if (this.visitedSegments.size < this.input.segments.length) {
@@ -39,15 +39,12 @@ class Traverser {
     }
   }
 
-  *_traverse(
-    current = this.input.segments[0],
-    path: string[] = [],
-  ): Generator<TraverseResult> {
-    if (this.visitedSegments.has(current)) return;
-    yield [current, path];
-    this.visitedSegments.add(current)
-    for (const next of this.foldLookup.get(current) ?? []) {
-      yield* this._traverse(next, [...path, current]);
+  *#traverseFolds(segment: string, previous: string | null): Generator<TraverseResult> {
+    if (this.visitedSegments.has(segment)) return;
+    yield [segment, previous];
+    this.visitedSegments.add(segment);
+    for (const next of this.foldLookup.get(segment) ?? []) {
+      yield* this.#traverseFolds(next, segment);
     }
   }
 }

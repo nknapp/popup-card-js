@@ -19,23 +19,26 @@ const previousMatrix = new Matrix4().makeTranslation(new Vector3(1, 0, -0.99));
 export function manualTest(container: HTMLDivElement) {
   initVisualizer(container);
   testVisualizer.addShape({
+    label: "original",
     points3d: points,
     boundary: TypedRecord.keys(points),
     color: "green",
   });
 
   testVisualizer.addShape({
+    label: "pretransform",
     points3d: applyMatrix(points, previousMatrix),
     boundary: TypedRecord.keys(points),
     color: "blue",
   });
-  const matrix = flattenSegment(points, previousMatrix);
+  const matrix = flattenSegment(Object.values(points), previousMatrix);
   const result = mapValues(points, (point) => {
     const vector = new Vector3(...point);
     vector.applyMatrix4(matrix);
     return vector.toArray() as Point3d;
   });
   testVisualizer.addShape({
+    label: "result",
     points3d: result,
     boundary: TypedRecord.keys(points),
     color: "red",

@@ -1,6 +1,5 @@
 import { Point3d } from "./model";
 import { Matrix4, Triangle, Vector3 } from "../vendor/three";
-import { TypedRecord } from "../utils/TypedRecord";
 
 /**
  * Rotate and translate a segment to the xy-plane.
@@ -10,26 +9,22 @@ import { TypedRecord } from "../utils/TypedRecord";
  * @param points the points of the segment, which are expected to be in one plane.
  * @param previousMatrix the matrix to apply before rotating the segment to the xy-plane.
  */
-export function flattenSegment<T extends string>(
-  points: Readonly<Record<T, Point3d>>,
+export function flattenSegment(
+  points: Readonly<Point3d[]>,
   previousMatrix?: Matrix4,
 ): Matrix4 {
-  const vectors = TypedRecord.values(points).map((point) =>
-    new Vector3().fromArray(point),
-  );
+  const vectors = points.map((point) => new Vector3().fromArray(point));
   if (previousMatrix) {
     for (const vector of vectors) {
       vector.applyMatrix4(previousMatrix);
     }
   }
 
+
   vectors.sort((a, b) => a.z - b.z);
   const referencePoint = vectors[0];
-
   const trianglePoints = [vectors[0], vectors[1], vectors[vectors.length - 1]];
-
   const triangle = new Triangle(...trianglePoints);
-
   const normal = triangle.getNormal(new Vector3());
   const angle = normal.angleTo(new Vector3(0, 0, 1));
   const rotationAxis = normal

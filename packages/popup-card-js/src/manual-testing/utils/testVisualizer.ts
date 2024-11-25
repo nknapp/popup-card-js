@@ -26,7 +26,12 @@ import {
 } from "../../vendor/three";
 import { PaperShapeGeometry } from "../../paper/PaperShapeGeometry.ts";
 
+interface VisualizerInit {
+  cameraPosition: Point3d;
+}
+
 interface Shape {
+  label?: string;
   points3d: Readonly<Record<string, Point3d>>;
   boundary: string[];
   color: string;
@@ -39,9 +44,21 @@ interface Visualizer {
     options?: {
       color?: string;
       startPos?: Vector3;
-      label: string | null;
+      label?: string | null;
     },
   ): void;
+}
+
+export let testVisualizer: Visualizer = {
+  addShape() {},
+  addArrow() {},
+};
+
+export function initVisualizer(
+  container: HTMLElement,
+  { cameraPosition = [1, 1, 10] }: Partial<VisualizerInit> = {},
+) {
+  testVisualizer = new VisualizerImpl(container, { cameraPosition });
 }
 
 class VisualizerImpl implements Visualizer {
@@ -51,8 +68,7 @@ class VisualizerImpl implements Visualizer {
   camera: PerspectiveCamera;
   private controls: CreateControlsReturn;
 
-  constructor(container: HTMLElement) {
-    const cameraPosition: Point3d = [1, 1, 10];
+  constructor(container: HTMLElement, init: VisualizerInit) {
     const { width, height } = container.getBoundingClientRect();
     this.scene = new Scene();
     this.renderer = new WebGLRenderer({ antialias: true });
@@ -68,7 +84,7 @@ class VisualizerImpl implements Visualizer {
     this.labelRenderer.domElement.style.pointerEvents = "none";
     container.appendChild(this.labelRenderer.domElement);
 
-    this.camera = createCamera(width / height, cameraPosition);
+    this.camera = createCamera(width / height, init.cameraPosition);
     this.scene.add(createLights(1));
     this.controls = createControls(this.camera, this.renderer);
 
@@ -98,6 +114,16 @@ class VisualizerImpl implements Visualizer {
     }
     mesh.castShadow = true;
     mesh.receiveShadow = true;
+    if (shape.label) {
+      const center = new Vector3();
+      for (const point of shape.boundary) {
+        center.add(new Vector3(...shape.points3d[point]));
+      }
+      center.divideScalar(shape.boundary.length);
+      const shapeLabel = createLabelDiv(shape.label, shape.color);
+      shapeLabel.position.copy(center);
+      mesh.add(shapeLabel);
+    }
     this.scene.add(mesh);
   }
 
@@ -143,15 +169,6 @@ class VisualizerImpl implements Visualizer {
     );
     return end;
   }
-}
-
-export let testVisualizer: Visualizer = {
-  addShape() {},
-  addArrow() {},
-};
-
-export function initVisualizer(container: HTMLElement) {
-  testVisualizer = new VisualizerImpl(container);
 }
 
 function createLabelDiv(text: string, color = "black") {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { traverseSegments } from "./traverseSegments.ts";
+import { TraverseResult, traverseSegments } from "./traverseSegments.ts";
 
 describe("iterateSegments", () => {
   it("iterates a single segment", () => {
@@ -10,7 +10,7 @@ describe("iterateSegments", () => {
           folds: [],
         }),
       ),
-    ).toEqual([["A", []]]);
+    ).toEqual([["A", null]]);
   });
 
   it("follows segments along folds", () => {
@@ -22,8 +22,8 @@ describe("iterateSegments", () => {
         }),
       ),
     ).toEqual([
-      ["A", []],
-      ["B", ["A"]],
+      ["A", null],
+      ["B", "A"],
     ]);
   });
 
@@ -50,9 +50,9 @@ describe("iterateSegments", () => {
         }),
       ),
     ).toEqual([
-      ["A", []],
-      ["B", ["A"]],
-      ["C", ["A", "B"]],
+      ["A", null],
+      ["B", "A"],
+      ["C", "B"],
     ]);
   });
 
@@ -68,9 +68,9 @@ describe("iterateSegments", () => {
     );
     expect(new Map(result)).toEqual(
       new Map([
-        ["A", []],
-        ["B", ["A"]],
-        ["C", ["A"]],
+        ["A", null],
+        ["B", "A"],
+        ["C", "A"],
       ]),
     );
   });
@@ -87,9 +87,9 @@ describe("iterateSegments", () => {
     );
     expect(new Map(result)).toEqual(
       new Map([
-        ["A", []],
-        ["B", ["A"]],
-        ["C", ["A"]],
+        ["A", null],
+        ["B", "A"],
+        ["C", "A"],
       ]),
     );
   });
@@ -108,17 +108,17 @@ describe("iterateSegments", () => {
     );
     expect(new Map(result)).toEqual(
       new Map([
-        ["A", []],
-        ["C", ["A"]],
-        ["B", ["A", "C"]],
-        ["D", ["A", "C"]],
-        ["E", ["A", "C", "D"]],
+        ["A", null],
+        ["C", "A"],
+        ["B", "C"],
+        ["D", "C"],
+        ["E", "D"],
       ]),
     );
   });
 });
 
-function getUpTo20Items<T>(items: Iterable<T>): T[] {
+function getUpTo20Items(items: Iterable<TraverseResult>): TraverseResult[] {
   const result = [];
   for (const item of items) {
     result.push(item);
