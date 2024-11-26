@@ -1,29 +1,29 @@
+
 import {
   initVisualizer,
   testVisualizer,
 } from "../manual-testing/utils/testVisualizer.ts";
 
 import { FoldedPaperSpec } from "../FoldedPaper/FoldedPaper.types.ts";
-import { flattenFoldedPaper } from "./flattenFoldedPaper.ts";
-import { Point3d } from "./model.ts";
-import { Matrix4, Vector3, degToRad } from "../vendor/three.ts";
+import { Matrix4, Vector3 } from "../vendor/three.ts";
+import {SvgGenerator} from "./index.ts";
 
 const foldedPaper = {
   points3d: {
-    B1: [-1, 0, -1],
-    B2: [-1, 0, 1],
-    B3: [1, 0, 1],
-    B4: [1, 0, -1],
-    B5: [-1, 0, -1],
-    glue1: [-0.75, 0, -0.75],
-    glue2a: [-0.75, 0, 0.75],
-    glue2b: [-0.75, 0, 0.75],
-    glue3: [0.75, 0, 0.75],
-    T1: [-1.5, 1, -1.5],
-    T2: [-1.5, 1, 1.5],
-    T3: [1.5, 1, 1.5],
-    T4: [1.5, 1, -1.5],
-    T5: [-1.5, 1, -1.5],
+    B1: [-5, 0, -5],
+    B2: [-5, 0, 5],
+    B3: [5, 0, 5],
+    B4: [5, 0, -5],
+    B5: [-5, 0, -5],
+    glue1: [-4, 0, -4],
+    glue2a: [-4, 0, 4],
+    glue2b: [-4, 0, 4],
+    glue3: [4, 0, 4],
+    T1: [-6, 3, -6],
+    T2: [-6, 3, 6],
+    T3: [6, 3, 6],
+    T4: [6, 3, -6],
+    T5: [-6, 3, -6],
   },
   segments: {
     S1: ["B1", "B2", "T2", "T1"],
@@ -44,21 +44,19 @@ const foldedPaper = {
 } satisfies FoldedPaperSpec;
 
 export function manualTest(container: HTMLDivElement) {
-  initVisualizer(container, { cameraPosition: [10, 10, 10] });
+  container.innerHTML = `
+   <div id="threeContainer" class="absolute inset-0"></div>
+   <div id="svgContainer" class="absolute w-96 h-96 "></div>
+  `
+  initVisualizer(container.querySelector("#threeContainer")!, { cameraPosition: [100, 30, 20] });
 
   show({ ...foldedPaper, color: "green" });
 
-  const points2d = flattenFoldedPaper(foldedPaper);
-  const flatPoints3d = Object.fromEntries(
-    points2d.entries().map(([key, value]) => [key, [value[0], value[1], 0]]),
-  ) as Record<string, Point3d>;
+  const svg =  new SvgGenerator(foldedPaper).generate()
+  const base64 = encodeURIComponent(btoa(svg))
 
-  show(
-    { ...foldedPaper, points3d: flatPoints3d, color: "red" },
-    new Matrix4()
-      .makeRotationX(degToRad(90))
-      .premultiply(new Matrix4().makeTranslation(new Vector3(0, -2, 0))),
-  );
+  container.querySelector("#svgContainer")!.innerHTML = `<img src="data:image/svg+xml;base64,${base64}" alt="svg flattened to 2d" />`
+
 }
 
 function show(foldedPaper: FoldedPaperSpec, transform?: Matrix4) {
