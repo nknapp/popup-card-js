@@ -1,6 +1,7 @@
 import { PopupSimulation, PopupSimulator } from "./index.ts";
 
 const thickness = 0.01;
+const cardY = 0
 const model: PopupSimulation = {
   commands: [
     {
@@ -8,12 +9,12 @@ const model: PopupSimulation = {
       id: "card",
       shape: {
         points3d: {
-          p1: [-0.5, 0, 0.5],
-          p2: [-0.5, 0, 0],
-          p3: [-0.5, 0, -0.5],
-          p4: [0.5, 0, -0.5],
-          p5: [0.5, 0, 0],
-          p6: [0.5, 0, 0.5],
+          p1: [-0.5, cardY, 0.5],
+          p2: [-0.5, cardY, 0],
+          p3: [-0.5, cardY, -0.5],
+          p4: [0.5,  cardY, -0.5],
+          p5: [0.5,  cardY, 0],
+          p6: [0.5,  cardY, 0.5],
         },
         segments: {
           a: ["p1", "p2", "p5", "p6"],

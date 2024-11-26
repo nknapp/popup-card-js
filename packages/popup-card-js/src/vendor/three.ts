@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+
 export {
   CSS2DObject,
   CSS2DRenderer,
@@ -35,3 +36,5 @@ export {
   Matrix4,
   ConeGeometry,
 } from "three";
+
+export const degToRad = (deg: number) => (deg * Math.PI) / 180;

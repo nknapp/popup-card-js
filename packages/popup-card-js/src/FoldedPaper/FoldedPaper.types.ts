@@ -12,7 +12,8 @@ export interface FoldedPaperSpec<
   points3d: Readonly<Record<PointId, Point3d>>
 
   /**
-   * List of points that form the boundary of the paper
+   * List of points that form the boundary of the paper.
+   * Note that the order of points must always be clockwise-turning around the filled area.
    */
   segments: Readonly<Record<PlaneId, PointId[]>>
 

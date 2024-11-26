@@ -23,6 +23,7 @@ import {
   ConeGeometry,
   Line,
   LineBasicMaterial,
+  Matrix4,
 } from "../../vendor/three";
 import { PaperShapeGeometry } from "../../paper/PaperShapeGeometry.ts";
 
@@ -35,6 +36,8 @@ interface Shape {
   points3d: Readonly<Record<string, Point3d>>;
   boundary: string[];
   color: string;
+  transform?: Matrix4;
+  showLabels?: boolean;
 }
 
 interface Visualizer {
@@ -47,11 +50,13 @@ interface Visualizer {
       label?: string | null;
     },
   ): void;
+  addLine(from: Vector3, to: Vector3, options?: { color?: string }): void;
 }
 
 export let testVisualizer: Visualizer = {
   addShape() {},
   addArrow() {},
+  addLine() {},
 };
 
 export function initVisualizer(
@@ -98,7 +103,7 @@ class VisualizerImpl implements Visualizer {
     });
   }
 
-  addShape(shape: Shape) {
+  addShape(shape: Shape): void {
     const mesh = new Mesh(
       new PaperShapeGeometry(shape),
       new MeshStandardMaterial({
@@ -107,14 +112,17 @@ class VisualizerImpl implements Visualizer {
         transparent: true,
       }),
     );
-    for (const point of shape.boundary) {
-      const pointLabel = createLabelDiv(point, shape.color);
-      pointLabel.position.set(...shape.points3d[point]);
-      mesh.add(pointLabel);
-    }
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-    if (shape.label) {
+
+    if (shape.showLabels) {
+      for (const point of shape.boundary) {
+        const pointLabel = createLabelDiv(point, shape.color);
+        pointLabel.position.set(...shape.points3d[point]);
+        mesh.add(pointLabel);
+      }
+    }
+    if (shape.showLabels && shape.label) {
       const center = new Vector3();
       for (const point of shape.boundary) {
         center.add(new Vector3(...shape.points3d[point]));
@@ -124,7 +132,18 @@ class VisualizerImpl implements Visualizer {
       shapeLabel.position.copy(center);
       mesh.add(shapeLabel);
     }
+    if (shape.transform) {
+      mesh.applyMatrix4(shape.transform);
+    }
     this.scene.add(mesh);
+  }
+
+  addLine(from: Vector3, to: Vector3, { color = "white" } = {}) {
+    const line = new Line(
+      new BufferGeometry().setFromPoints([from, to]),
+      new LineBasicMaterial({ color }),
+    );
+    this.scene.add(line);
   }
 
   addArrow(
