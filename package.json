@@ -17,7 +17,9 @@
     "----- run in workspace -----": "",
     "popup-card-js": "npm run --workspace=packages/popup-card-js",
     "docs": "npm run --workspace=docs",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "----- short-cuts ------------": "",
+    "update-snapshots": "npm run --workspace=packages/popup-card-js -- test:e2e -u"
   },
   "workspaces": [
     "packages/popup-card-js",
