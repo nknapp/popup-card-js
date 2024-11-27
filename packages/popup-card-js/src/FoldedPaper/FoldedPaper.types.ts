@@ -9,13 +9,13 @@ export interface FoldedPaperSpec<
   /**
    * A list of point position of the 3d unfolded shape
    */
-  points3d: Readonly<Record<PointId, Point3d>>
+  points3d: Readonly<Record<PointId, Point3d>>;
 
   /**
    * List of points that form the boundary of the paper.
    * Note that the order of points must always be clockwise-turning around the filled area.
    */
-  segments: Readonly<Record<PlaneId, PointId[]>>
+  segments: Readonly<Record<PlaneId, PointId[]>>;
 
   dominance?: Record<PlaneId, number>;
   /**

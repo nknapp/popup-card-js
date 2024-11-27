@@ -39,7 +39,10 @@ class Traverser {
     }
   }
 
-  *#traverseFolds(segment: string, previous: string | null): Generator<TraverseResult> {
+  *#traverseFolds(
+    segment: string,
+    previous: string | null,
+  ): Generator<TraverseResult> {
     if (this.visitedSegments.has(segment)) return;
     yield [segment, previous];
     this.visitedSegments.add(segment);

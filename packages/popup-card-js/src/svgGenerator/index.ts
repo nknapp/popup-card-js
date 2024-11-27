@@ -15,8 +15,8 @@ export class SvgGenerator {
   constructor(private foldedPaper: FoldedPaperSpec) {
     this.points2d = flattenFoldedPaper(this.foldedPaper);
     this.bounds = getBounds(this.points2d.values());
-    console.log(this.points2d)
-    console.log(this.bounds)
+    console.log(this.points2d);
+    console.log(this.bounds);
   }
 
   generate(): string {

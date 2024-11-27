@@ -1,4 +1,3 @@
-
 import {
   initVisualizer,
   testVisualizer,
@@ -6,7 +5,7 @@ import {
 
 import { FoldedPaperSpec } from "../FoldedPaper/FoldedPaper.types.ts";
 import { Matrix4, Vector3 } from "../vendor/three.ts";
-import {SvgGenerator} from "./index.ts";
+import { SvgGenerator } from "./index.ts";
 
 const foldedPaper = {
   points3d: {
@@ -47,16 +46,18 @@ export function manualTest(container: HTMLDivElement) {
   container.innerHTML = `
    <div id="threeContainer" class="absolute inset-0"></div>
    <div id="svgContainer" class="absolute w-96 h-96 "></div>
-  `
-  initVisualizer(container.querySelector("#threeContainer")!, { cameraPosition: [100, 30, 20] });
+  `;
+  initVisualizer(container.querySelector("#threeContainer")!, {
+    cameraPosition: [100, 30, 20],
+  });
 
   show({ ...foldedPaper, color: "green" });
 
-  const svg =  new SvgGenerator(foldedPaper).generate()
-  const base64 = encodeURIComponent(btoa(svg))
+  const svg = new SvgGenerator(foldedPaper).generate();
+  const base64 = encodeURIComponent(btoa(svg));
 
-  container.querySelector("#svgContainer")!.innerHTML = `<img src="data:image/svg+xml;base64,${base64}" alt="svg flattened to 2d" />`
-
+  container.querySelector("#svgContainer")!.innerHTML =
+    `<img src="data:image/svg+xml;base64,${base64}" alt="svg flattened to 2d" />`;
 }
 
 function show(foldedPaper: FoldedPaperSpec, transform?: Matrix4) {
